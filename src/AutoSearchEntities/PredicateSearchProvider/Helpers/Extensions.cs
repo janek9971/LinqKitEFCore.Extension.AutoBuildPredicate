@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq.Expressions;
+using AutoSearchEntities.PredicateSearchProvider.Models;
 using JetBrains.Annotations;
 
-namespace AutoSearchEntities.PredicateSearchProvider
+namespace AutoSearchEntities.PredicateSearchProvider.Helpers
 {
     internal static class ExpressionExtensions
     {
@@ -35,20 +36,17 @@ namespace AutoSearchEntities.PredicateSearchProvider
             foreach (var part in key.Split('.'))
             {
                 propertyOrField = Expression.PropertyOrField(current, part.ToUpper());
-                // subsequent parts go to selector itself: "x.Parameter.AnotherParameter"
-                current = propertyOrField;
             }
 
 
             return propertyOrField;
         }
     }
-    public static class TypeExtensions
+    internal static class TypeExtensions
     {
         public static bool IsNullable(this Type type) => Nullable.GetUnderlyingType(type) != null;
 
         public static bool HasProperty(this Type obj, Type propertyType, string propertyName)
-            //            PropertyInfo propertyInfo)
         {
             var propertyOfObj = obj.GetProperty(propertyName.ToUpper().Replace("_", string.Empty));
 
@@ -59,7 +57,6 @@ namespace AutoSearchEntities.PredicateSearchProvider
 
 
             var objType = Nullable.GetUnderlyingType(propertyOfObj.PropertyType) ?? propertyOfObj.PropertyType;
-            //            Type propertyType;
 
             if (propertyType == typeof(DateTimeFromToFilter))
             {

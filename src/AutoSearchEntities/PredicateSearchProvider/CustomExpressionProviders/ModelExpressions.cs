@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using AutoSearchEntities.PredicateSearchProvider.Helpers;
 using JetBrains.Annotations;
 
 #pragma warning disable 1591
 
-namespace AutoSearchEntities.PredicateSearchProvider
+namespace AutoSearchEntities.PredicateSearchProvider.CustomExpressionProviders
 {
     public class ModelExpressions<TEntity> where TEntity : class
     {
@@ -23,7 +24,7 @@ namespace AutoSearchEntities.PredicateSearchProvider
         public class ExpressionsBuilder
         {
             private readonly List<Expression<Func<TEntity, bool>>> _expressions = new List<Expression<Func<TEntity, bool>>>();
-            private ParameterExpression _item;
+            private readonly ParameterExpression _item;
 
             public ExpressionsBuilder(ParameterExpression item)
             {
@@ -96,49 +97,11 @@ namespace AutoSearchEntities.PredicateSearchProvider
 
                 return this;
             }
-            /*  public ExpressionsBuilder AddExpression(Expression<Func<TEntity, DateTime>> leftExpr, DateTime? value, ExpressionType type)
-            {
-                if (value == null) return this;
-                var from = Expression.Constant(value.TruncateTime());
-                //                var p = leftExpr.Parameters.First();
-                var leftVisitor = new ReplaceExpressionVisitor(leftExpr.Parameters[0], _item);
-                var leftExprBody = leftVisitor.Visit(leftExpr.Body);
-                //                leftExprBody = (BinaryExpression)new ParameterReplacer(_item).Visit(leftExprBody);
-//                var binary = Expression.GreaterThanOrEqual(leftExprBody, from);
-                var binaryExpression = Expression.MakeBinary(type, leftExprBody, from);
-
-
-                var lambda = binaryExpression.LambdaExpressionBuilder<TEntity>(_item);
-
-                _expressions.Add(lambda);
-
-
-                return this;
-            }*/
-
             public ModelExpressions<TEntity> Build()
             {
                 return new ModelExpressions<TEntity>(_expressions);
             }
         }
     }
-    internal class ReplaceExpressionVisitor
-        : ExpressionVisitor
-    {
-        private readonly Expression _oldValue;
-        private readonly Expression _newValue;
-
-        public ReplaceExpressionVisitor(Expression oldValue, Expression newValue)
-        {
-            _oldValue = oldValue;
-            _newValue = newValue;
-        }
-
-        public override Expression Visit(Expression node)
-        {
-            if (node == _oldValue)
-                return _newValue;
-            return base.Visit(node);
-        }
-    }
+  
 }

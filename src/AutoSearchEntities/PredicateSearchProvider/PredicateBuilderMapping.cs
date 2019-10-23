@@ -4,6 +4,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using AutoSearchEntities.PredicateSearchProvider.CustomAttributes;
+using AutoSearchEntities.PredicateSearchProvider.CustomExpressionProviders;
+using AutoSearchEntities.PredicateSearchProvider.Helpers;
+using AutoSearchEntities.PredicateSearchProvider.Models;
 using LinqKit;
 
 // ReSharper disable AssignNullToNotNullAttribute
@@ -14,10 +17,10 @@ namespace AutoSearchEntities.PredicateSearchProvider
 {
     internal static class PredicateBuilderMapping<TEntity> where TEntity : class, new()
     {
-//        private const string AssemblyName = "EntityModel";
-//        private const string TypeNamePrototype = "EntityModel.AntModels";
+        //        private const string AssemblyName = "EntityModel";
+        //        private const string TypeNamePrototype = "EntityModel.AntModels";
 
-        public static ExpressionStarter<TEntity> PredicateCore<TU>(TU filter, ParameterExpression item)
+        internal static ExpressionStarter<TEntity> PredicateCore<TU>(TU filter, ParameterExpression item)
             where TU : class
         {
             var predicate = PredicateBuilder.New<TEntity>(true);
@@ -40,7 +43,7 @@ namespace AutoSearchEntities.PredicateSearchProvider
             return predicate;
         }
 
-        public static List<Expression<Func<TEntity, bool>>> GetCustomExpressions<TU>(TU filter,
+        internal static List<Expression<Func<TEntity, bool>>> GetCustomExpressions<TU>(TU filter,
             ParameterExpression item) where TU : class, ICustomExpressions<TEntity>
         {
             var expressionsBuilder = new ModelExpressions<TEntity>.ExpressionsBuilder(item);
@@ -219,7 +222,7 @@ namespace AutoSearchEntities.PredicateSearchProvider
                 {
                     var fieldPathSearchAttribute = property.GetCustomAttribute<AdditionalSearchOptions>();
 
-                    entityName = fieldPathSearchAttribute.EntityName ?? propertyName;
+                    entityName = fieldPathSearchAttribute.EntityPropertyName ?? propertyName;
 
                     var name = path + entityName;
                     searchPredicatePropertyInfo.PredicateBuilderParams.PropertyOrField = name.GetPropertyOrField(item);

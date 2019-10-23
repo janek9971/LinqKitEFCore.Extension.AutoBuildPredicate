@@ -1,6 +1,6 @@
 ﻿#pragma warning disable 1591
 
-namespace AutoSearchEntities.PredicateSearchProvider
+namespace AutoSearchEntities.PredicateSearchProvider.CustomExpressionProviders
 {
     public interface ICustomExpressions<TEntity> where TEntity : class
     {

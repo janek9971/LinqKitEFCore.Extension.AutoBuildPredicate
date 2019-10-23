@@ -8,11 +8,12 @@
     <Company>krzysztof.jankowski</Company>
     <Product>Extension for EFCoreLinqKit</Product>
     <PackageId>LinqKitEFCore.Extension.AutoSearchEntities</PackageId>
-    <Version>0.0.1</Version>
+    <Version>0.0.2</Version>
     <NeutralLanguage>en</NeutralLanguage>
-    <RepositoryUrl />
+    <RepositoryUrl>https://github.com/janek9971/LinqKitEFCore.Extension.AutoSearchEntities</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 	    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	    <PackageProjectUrl>https://github.com/janek9971/LinqKitEFCore.Extension.AutoSearchEntities</PackageProjectUrl>
 
   </PropertyGroup>
 
@@ -22,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="PredicateSearchProvider\ICustomExpressions.cs">
+    <Compile Update="PredicateSearchProvider\CustomExpressionProviders\ICustomExpressions.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>

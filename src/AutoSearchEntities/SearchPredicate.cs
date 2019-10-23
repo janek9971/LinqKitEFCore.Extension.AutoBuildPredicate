@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Linq.Expressions;
 using AutoSearchEntities.PredicateSearchProvider;
+using AutoSearchEntities.PredicateSearchProvider.CustomExpressionProviders;
 using LinqKit;
 
 namespace AutoSearchEntities
@@ -17,23 +18,24 @@ namespace AutoSearchEntities
         public ExpressionStarter<TEntity> SearchByFilterPredicateProvidedByCustomExpressions<TU>(TU filter = default) 
             where TU : class, ICustomExpressions<TEntity>
         {
-            var prodProgVerPredicate =
+            var predicateCore =
                 PredicateBuilderMapping<TEntity>.PredicateCore(filter, Item);
 
             var expressions = PredicateBuilderMapping<TEntity>.GetCustomExpressions(filter, Item);
-            if (!expressions.Any()) return prodProgVerPredicate;
-            foreach (var filterExpression in expressions)
-                prodProgVerPredicate = prodProgVerPredicate.And(filterExpression);
 
-            return prodProgVerPredicate;
+            if (!expressions.Any()) return predicateCore;
+            foreach (var filterExpression in expressions)
+                predicateCore = predicateCore.And(filterExpression);
+
+            return predicateCore;
         }
         public ExpressionStarter<TEntity> SearchByFilterPredicate<TU>(TU filter = default) where TU : class
         {
 
-            var prodProgVerPredicate =
+            var predicateCore =
                 PredicateBuilderMapping<TEntity>.PredicateCore(filter, Item);
 
-            return prodProgVerPredicate;
+            return predicateCore;
         }
     }
 }

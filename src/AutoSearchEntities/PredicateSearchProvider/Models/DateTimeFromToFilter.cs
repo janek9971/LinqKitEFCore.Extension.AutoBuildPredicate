@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using JetBrains.Annotations;
 
-namespace AutoSearchEntities
+namespace AutoSearchEntities.PredicateSearchProvider.Models
 {
    public class DateTimeFromToFilter
     {

@@ -7,17 +7,7 @@ namespace AutoSearchEntities.PredicateSearchProvider.CustomAttributes
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field )]
     public class AdditionalSearchOptions : FieldAttributeBase
     {
-//        private string _searchPath;
-        public string EntityName { get; set; }
-
-//        public CustomSearchPath CustomSearchPath { get; set; }
-        //        public Type[] NestedTypes { get; set; } 
-        //       public string SearchPath
-        //        {
-        //            get => _searchPath;
-        //            set => _searchPath = value + ".";
-        //        }
-    
+        public string EntityPropertyName { get; set; }
         public StringMethods StringSearchType { get; set; }
     }
 
