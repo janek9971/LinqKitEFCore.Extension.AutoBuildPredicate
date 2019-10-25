@@ -41,7 +41,6 @@ namespace AutoSearchEntities.PredicateSearchProvider.CustomExpressionProviders
                 _expressions.Add(expression);
                 return this;
 
-
             }
 
             public void AddExpressionWhenPropNullOrEmpty(Expression<Func<TEntity, object>> leftExpr, [CanBeNull] object value,
@@ -64,9 +63,9 @@ namespace AutoSearchEntities.PredicateSearchProvider.CustomExpressionProviders
                         break;
                 }
             }
-            public void AddExpressionWhenPropNullOrEmpty(Expression<Func<TEntity, bool>> leftExpr, [CanBeNull] object objectWhenNull)
+            public void AddExpressionWhenPropNullOrEmpty(Expression<Func<TEntity, bool>> leftExpr, [CanBeNull] object propWhenNull)
             {
-                switch (objectWhenNull)
+                switch (propWhenNull)
                 {
                     case string strNull:
                     {
