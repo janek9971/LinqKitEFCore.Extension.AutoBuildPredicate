@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using AutoSearchEntities.PredicateSearchProvider.CustomAttributes;
 using AutoSearchEntities.PredicateSearchProvider.CustomExpressionProviders;
+using AutoSearchEntities.PredicateSearchProvider.CustomUtilities.Attributes;
+using AutoSearchEntities.PredicateSearchProvider.CustomUtilities.Enums;
 using AutoSearchEntities.PredicateSearchProvider.Helpers;
 using AutoSearchEntities.PredicateSearchProvider.Models;
 using LinqKit;
@@ -70,98 +71,150 @@ namespace AutoSearchEntities.PredicateSearchProvider
 
                 var propertyType = new TEntity().GetType().GetProperty(entityName.ToUpper())?.PropertyType;
 
-                switch (propertyValue)
+
+                if (propertyValue is string _)
                 {
-                    case string _:
+//                    var methodName =
+//                        searchPredicatePropertyInfo.PredicateBuilderParams.StringSearchMethod.ToString();
+
+                    var equalsMethodInfo =
+                        typeof(string).GetMethod(StringSearchOption.Equals.ToString(), new[] {typeof(string), typeof(StringComparison)});
+                    var valueToEquals = Expression.Constant(propertyValue);
+                    var comparisonType = Expression.Constant(StringComparison.InvariantCultureIgnoreCase);
+
+                    var methodCallExpression = Expression.Call(propertyOrField, equalsMethodInfo, valueToEquals,
+                        comparisonType);
+
+                    predicate = predicate.And(Expression.Lambda<Func<TEntity, bool>>(methodCallExpression, item));
+                }
+                else if (propertyValue is StringFilter stringFilter)
+                {
+                    var methodName =
+                        stringFilter.StringSearchOption.ToString();
+                    var equalsMethodInfo =
+                        typeof(string).GetMethod(methodName, new[] { typeof(string), typeof(StringComparison) });
+                    var valueToEquals = Expression.Constant(stringFilter.Str);
+                    var comparisonType = Expression.Constant(stringFilter.StringComparison);
+
+                    var methodCallExpression = Expression.Call(propertyOrField, equalsMethodInfo, valueToEquals,
+                        comparisonType);
+
+                    predicate = predicate.And(Expression.Lambda<Func<TEntity, bool>>(methodCallExpression, item));
+                }
+                else if (propertyValue is DateTimeFromToFilter properties)
+                {
+//                    var propertiesDateTime = propertyValue.GetType().GetProperties();
+
+                    var dateTimeValueDateFrom = properties.DateFrom;
+//                        (DateTimeValue) propertiesDateTime[0].GetValue(propertyValue);
+                    var dateTimeValueDateTo = properties.DateTo;
+
+
+
+                    var fromDate = dateTimeValueDateFrom.DateTime;
+                    var toDate = dateTimeValueDateTo.DateTime;
+
+                    var rightFromDate = Expression.Constant(fromDate.Value.Date);
+                    ConstantExpression rightToDate = null;
+
+                    if (toDate.HasValue)
+                        rightToDate = Expression.Constant(toDate.Value.Date);
+
+
+                    var dateFromInfoTuple = (rightFromDate, dateTimeValueDateFrom.ExpressionType);
+                    var dateToInfoTuple = (rightToDate, dateTimeValueDateTo.ExpressionType);
+                    if (propertyType.IsNullable())
+
                     {
-                        var methodName =
-                            searchPredicatePropertyInfo.PredicateBuilderParams.StringSearchMethod.ToString();
+                        ConditionalExpression LeftConditionalExpr()
+                        {
+                            var ifTrue = Expression.Property(Expression.Property(propertyOrField, "Value"), "Date")
+                                .GreaterLessThanBuilderExpressions(dateFromInfoTuple, dateToInfoTuple);
 
-                        var equalsMethodInfo =
-                            typeof(string).GetMethod(methodName, new[] {typeof(string), typeof(StringComparison)});
-                        var valueToEquals = Expression.Constant(propertyValue);
-                        var comparisonType = Expression.Constant(StringComparison.InvariantCultureIgnoreCase);
+                            var ifFalse = propertyOrField.GreaterLessThanBuilderExpressions(
+                                (Expression.Constant(fromDate, typeof(DateTime?)), dateTimeValueDateFrom.ExpressionType),
+                                (Expression.Constant(toDate, typeof(DateTime?)), dateTimeValueDateFrom.ExpressionType));
 
-                        var methodCallExpression = Expression.Call(propertyOrField, equalsMethodInfo, valueToEquals,
-                            comparisonType);
+                            var conditionalExpression =
+                                Expression.Condition(Expression.Property(propertyOrField, "HasValue"), ifTrue, ifFalse);
 
-                        predicate = predicate.And(Expression.Lambda<Func<TEntity, bool>>(methodCallExpression, item));
-                        break;
+                            return conditionalExpression;
+                        }
+
+                        var lambdaExpr = LeftConditionalExpr().LambdaExpressionBuilder<TEntity>(item);
+
+                        predicate = predicate.And(lambdaExpr);
+                    }
+                    else
+                    {
+                        var entityPropTruncated = Expression.Property(propertyOrField, "Date");
+
+
+                        var dateTimeExpr =
+                            entityPropTruncated.GreaterLessThanBuilderExpressions(dateFromInfoTuple, dateToInfoTuple);
+
+                        var lambdaExpr = dateTimeExpr.LambdaExpressionBuilder<TEntity>(item);
+                        predicate = predicate.And(lambdaExpr);
+                    }
+                }
+                else if (propertyValue.GetType() == typeof(NumericFilter<>))
+                {
+                    var rangeProperties = propertyValue.GetType().GetProperties();
+                    var lessThan =  rangeProperties[0].GetValue(propertyValue);
+                    var greaterThan = rangeProperties[1].GetValue(propertyValue);
+
+                    var lessThanValues = lessThan.GetType().GetProperties();
+                    var lessThanValue = lessThanValues[0].GetValue(propertyValue);
+                    var exprTypeLessThan = (CompareExpressionType)lessThanValues[1].GetValue(propertyValue);
+
+                    var greaterThanValues = greaterThan.GetType().GetProperties();
+                    var greaterThanValue = greaterThanValues[0].GetValue(propertyValue);
+                    var exprTypeGreaterThan =
+                        (CompareExpressionType)greaterThanValues[1].GetValue(propertyValue);
+
+                    var lessThanExprConst = Expression.Constant(lessThanValue);
+                    var greaterThanExprConst = Expression.Constant(greaterThanValue);
+                    //                            var left = Expression.GreaterThan(propertyOrField, greaterThanExprConst);
+
+                    if (propertyOrField.GetType() != lessThanValue.GetType() ||
+                        propertyOrField.GetType() != greaterThanValue.GetType())
+                    {
+                        throw new Exception("Wrong type");
                     }
 
-                    case DateTimeFromToFilter _:
-                    {
-                        var valuesDateTime = propertyValue.GetType().GetProperties();
-                        var fromDate = (DateTime?) valuesDateTime[0].GetValue(propertyValue);
-                        var toDate = (DateTime?) valuesDateTime[1].GetValue(propertyValue);
+                    var left = Expression.MakeBinary(exprTypeGreaterThan.ConvertByName<ExpressionType>(),
+                        propertyOrField,
+                        greaterThanExprConst);
 
-                        var rightFromDate = Expression.Constant(fromDate.Value.Date);
-                        ConstantExpression rightToDate = null;
-
-                        if (toDate.HasValue)
-                            rightToDate = Expression.Constant(toDate.Value.Date);
-
-                        var entityProp = propertyOrField;
+                    var right = Expression.MakeBinary(exprTypeLessThan.ConvertByName<ExpressionType>(),
+                        propertyOrField,
+                        lessThanExprConst);
+                    //                            var right = Expression.LessThan(propertyOrField, lessThanExprConst);
 
 
-                        if (propertyType.IsNullable())
+                    var and = Expression.AndAlso(left, right);
+                    var lambda = and.LambdaExpressionBuilder<TEntity>(item);
 
-                        {
-                            ConditionalExpression LeftConditionalExpr()
-                            {
-                                var ifTrue = Expression.Property(Expression.Property(entityProp, "Value"), "Date")
-                                    .GreaterLessThanBuilderExpressions(rightFromDate, rightToDate);
-
-                                var ifFalse = entityProp.GreaterLessThanBuilderExpressions(
-                                    Expression.Constant(fromDate, typeof(DateTime?)),
-                                    Expression.Constant(toDate, typeof(DateTime?)));
-
-                                var conditionalExpression =
-                                    Expression.Condition(Expression.Property(entityProp, "HasValue"), ifTrue, ifFalse);
-
-                                return conditionalExpression;
-                            }
-
-                            var lambdaExpr = LeftConditionalExpr().LambdaExpressionBuilder<TEntity>(item);
-
-                            predicate = predicate.And(lambdaExpr);
-                        }
-                        else
-                        {
-                            var entityPropTruncated = Expression.Property(entityProp, "Date");
-
-
-                            var dateTimeExpr =
-                                entityPropTruncated.GreaterLessThanBuilderExpressions(rightFromDate, rightToDate);
-                                
-                            var lambdaExpr = dateTimeExpr.LambdaExpressionBuilder<TEntity>(item);
-                            predicate = predicate.And(lambdaExpr);
-                        }
-
-                        break;
-                    }
-
-                    default:
-                    {
-                        var prop = propertyOrField;
+                    predicate = predicate.And(lambda);
+                }
+                else
+                {
                         var right = Expression.Constant(propertyValue);
                         if (propertyType.IsNullable())
                         {
-                            var leftUnaryExpression = Expression.Convert(prop, propertyValue.GetType());
+                            var leftUnaryExpression = Expression.Convert(propertyOrField, propertyValue.GetType());
 
                             var equalBody = Expression.Equal(leftUnaryExpression, right);
-                            var lambdaExpr = Expression.Lambda<Func<TEntity, bool>>(equalBody, item);
-                            predicate = predicate.And(lambdaExpr);
+//                                var lambdaExpr = Expression.Lambda<Func<TEntity, bool>>(equalBody, item);
+                            predicate = predicate.And(equalBody.LambdaExpressionBuilder<TEntity>(item));
                         }
                         else
                         {
-                            var equalBody = Expression.Equal(prop, right);
-                            var lambdaExpr = Expression.Lambda<Func<TEntity, bool>>(equalBody, item);
-                            predicate = predicate.And(lambdaExpr);
+                            var equalBody = Expression.Equal(propertyOrField, right);
+//                                var lambdaExpr = Expression.Lambda<Func<TEntity, bool>>(equalBody, item);
+                            predicate = predicate.And(equalBody.LambdaExpressionBuilder<TEntity>(item));
                         }
-
-                        break;
-                    }
+                    
                 }
             }
 
@@ -226,15 +279,15 @@ namespace AutoSearchEntities.PredicateSearchProvider
 
                     var name = path + entityName;
                     searchPredicatePropertyInfo.PredicateBuilderParams.PropertyOrField = name.GetPropertyOrField(item);
-                    searchPredicatePropertyInfo.PredicateBuilderParams.StringSearchMethod =
-                        fieldPathSearchAttribute.StringSearchType;
+//                    searchPredicatePropertyInfo.PredicateBuilderParams.StringSearchMethod =
+//                        fieldPathSearchAttribute.StringSearchType;
                 }
                 else
                 {
                     searchPredicatePropertyInfo.PredicateBuilderParams.PropertyOrField =
                         entityName.GetPropertyOrField(item);
-                    searchPredicatePropertyInfo.PredicateBuilderParams.StringSearchMethod =
-                        StringMethods.Equals;
+//                    searchPredicatePropertyInfo.PredicateBuilderParams.StringSearchMethod =
+//                        StringMethods.Equals;
                 }
 
                 searchPredicatePropertyInfo.EntityName = entityName;
