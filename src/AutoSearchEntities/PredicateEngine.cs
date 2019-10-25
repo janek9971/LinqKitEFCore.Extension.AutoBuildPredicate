@@ -6,16 +6,16 @@ using LinqKit;
 
 namespace AutoSearchEntities
 {
-    public class SearchPredicate<TEntity> where TEntity : class, new()
+    public class PredicateEngine<TEntity> where TEntity : class, new()
     {
         private ParameterExpression Item { get; }
 //        private ExpressionStarter<TEntity> Predicate { get; set; }
-        public SearchPredicate()
+        public PredicateEngine()
         {
             Item = Expression.Parameter(typeof(TEntity), "entity");
 
         }
-        public ExpressionStarter<TEntity> SearchByFilterPredicateProvidedByCustomExpressions<TU>(TU filter = default) 
+        public ExpressionStarter<TEntity> PredicateProvidedByCustomExpressions<TU>(TU filter = default) 
             where TU : class, ICustomExpressions<TEntity>
         {
             var predicateCore =
@@ -29,7 +29,7 @@ namespace AutoSearchEntities
 
             return predicateCore;
         }
-        public ExpressionStarter<TEntity> SearchByFilterPredicate<TU>(TU filter = default) where TU : class
+        public ExpressionStarter<TEntity> SimplePredicate<TU>(TU filter = default) where TU : class
         {
 
             var predicateCore =

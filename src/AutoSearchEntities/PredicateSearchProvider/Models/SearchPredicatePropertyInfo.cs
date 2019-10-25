@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
-using AutoSearchEntities.PredicateSearchProvider.CustomAttributes;
+using AutoSearchEntities.PredicateSearchProvider.CustomUtilities.Enums;
 
 #pragma warning disable 1591
 
@@ -16,7 +16,7 @@ namespace AutoSearchEntities.PredicateSearchProvider.Models
     public class PredicateBuilderParams
     {
         public MemberExpression PropertyOrField { get; set; }
-        public StringMethods StringSearchMethod { get; set; }
+        public StringSearchOption StringSearchMethod { get; set; }
         public Expression Expression { get; set; }
     }
 }
