@@ -2,13 +2,13 @@
 
 #pragma warning disable 1591
 
-namespace AutoSearchEntities.PredicateSearchProvider.CustomAttributes
+namespace AutoSearchEntities.PredicateSearchProvider.CustomUtilities.Attributes
 {
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field )]
     public class AdditionalSearchOptions : FieldAttributeBase
     {
         public string EntityPropertyName { get; set; }
-        public StringMethods StringSearchType { get; set; }
+//        public StringMethods StringSearchType { get; set; }
     }
 
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
@@ -30,10 +30,5 @@ namespace AutoSearchEntities.PredicateSearchProvider.CustomAttributes
         public string AssemblyName { get; }
         public string TypeName { get;}
 
-    }
-    public enum StringMethods
-    {
-        Equals,
-        Contains
     }
 }
