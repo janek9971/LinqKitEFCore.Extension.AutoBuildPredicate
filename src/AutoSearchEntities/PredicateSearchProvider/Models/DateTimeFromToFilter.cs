@@ -4,9 +4,15 @@ using JetBrains.Annotations;
 
 namespace AutoSearchEntities.PredicateSearchProvider.Models
 {
-   public class DateTimeFromToFilter
+    public class DateTimeFromToFilter
     {
-        [Required][NotNull] public DateTime? DateFrom { get; set; }
-        public DateTime? DateTo { get; set; }
+        [Required] [NotNull] public DateTimeValue DateFrom { get; set; }
+        public DateTimeValue DateTo { get; set; }
+    }
+
+    public class DateTimeValue
+    {
+        public DateTime? DateTime { get; set; }
+        public CompareExpressionType ExpressionType { get; set; }
     }
 }
