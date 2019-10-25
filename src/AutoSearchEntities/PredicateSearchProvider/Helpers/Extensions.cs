@@ -5,6 +5,47 @@ using JetBrains.Annotations;
 
 namespace AutoSearchEntities.PredicateSearchProvider.Helpers
 {
+
+    internal static class Extensions
+    {
+        public static bool IsNumericType(this object o)
+        {
+            switch (Type.GetTypeCode(Nullable.GetUnderlyingType(o.GetType())))
+            {
+                case TypeCode.Byte:
+                case TypeCode.SByte:
+                case TypeCode.UInt16:
+                case TypeCode.UInt32:
+                case TypeCode.UInt64:
+                case TypeCode.Int16:
+                case TypeCode.Int32:
+                case TypeCode.Int64:
+                case TypeCode.Decimal:
+                case TypeCode.Double:
+                case TypeCode.Single:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public static TEnum ConvertByName<TEnum>(this Enum source, bool ignoreCase = false) where TEnum : struct
+        {
+            // if limited by lack of generic enum constraint
+            if (!typeof(TEnum).IsEnum)
+            {
+                throw new InvalidOperationException("enumeration type required.");
+            }
+
+            TEnum result;
+            if (!Enum.TryParse(source.ToString(), ignoreCase, out result))
+            {
+                throw new Exception("conversion failure.");
+            }
+
+            return result;
+        }
+    }
     internal static class ExpressionExtensions
     {
         public static Expression<Func<T, bool>> LambdaExpressionBuilder<T>(this Expression binaryExpression, ParameterExpression parameterExpression)
@@ -12,13 +53,22 @@ namespace AutoSearchEntities.PredicateSearchProvider.Helpers
             return Expression.Lambda<Func<T, bool>>(binaryExpression, parameterExpression);
         }
         public static Expression GreaterLessThanBuilderExpressions(this MemberExpression leftExpression,
-            Expression rightFromDate,
-            [CanBeNull] Expression rightToDate)
+            (Expression expr, CompareExpressionType exprType) rightFromDate,
+            [CanBeNull] (Expression expr, CompareExpressionType exprType) rightToDate)
         {
-            var greaterThanOrEqualBody = Expression.GreaterThanOrEqual(leftExpression, rightFromDate);
+            var (expression, compareExpressionType) = rightFromDate;
+            var greaterThanOrEqualBody = Expression.MakeBinary(compareExpressionType.ConvertByName<ExpressionType>(),
+                leftExpression,
+                expression);
 
-            if (rightToDate == null) return greaterThanOrEqualBody;
-            var lessThanOrEqualBody = Expression.LessThanOrEqual(leftExpression, rightToDate);
+//            Expression.GreaterThanOrEqual(leftExpression, rightFromDate.expr);
+
+            var (expr, exprType) = rightToDate;
+            if (expr == null) return greaterThanOrEqualBody;
+            var lessThanOrEqualBody = Expression.MakeBinary(exprType.ConvertByName<ExpressionType>(),
+                leftExpression,
+                expr);
+            ;
 
             return Expression.AndAlso(greaterThanOrEqualBody, lessThanOrEqualBody);
         }
@@ -71,4 +121,6 @@ namespace AutoSearchEntities.PredicateSearchProvider.Helpers
             return objType == propertyType;
         }
     }
+
+
 }
