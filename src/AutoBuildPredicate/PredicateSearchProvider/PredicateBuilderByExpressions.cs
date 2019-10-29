@@ -110,12 +110,11 @@ namespace AutoSearchEntities.PredicateSearchProvider
         {
             var equalsMethodInfo =
                 typeof(string).GetMethod(StringSearchOption.Equals.ToString(),
-                    new[] {typeof(string), typeof(StringComparison)});
+                    new[] {typeof(string)});
             var valueToEquals = Expression.Constant(FilterPropertyValue);
-            var comparisonType = Expression.Constant(StringComparison.InvariantCultureIgnoreCase);
 
-            var methodCallExpression = Expression.Call(PropertyOrField, equalsMethodInfo, valueToEquals,
-                comparisonType);
+
+            var methodCallExpression = Expression.Call(PropertyOrField, equalsMethodInfo, valueToEquals);
             var lambda = methodCallExpression.LambdaExpressionBuilder<TEntity>(Item);
 
             return lambda;
@@ -173,15 +172,28 @@ namespace AutoSearchEntities.PredicateSearchProvider
         {
             var methodName =
                 stringFilter.StringSearchOption.ToString();
-            var equalsMethodInfo =
-                typeof(string).GetMethod(methodName, new[] {typeof(string), typeof(StringComparison)});
+            MethodCallExpression methodCallExpression;
             var valueToEquals = Expression.Constant(stringFilter.Str);
-            var comparisonType = Expression.Constant(stringFilter.StringComparison);
 
-            var methodCallExpression = Expression.Call(PropertyOrField, equalsMethodInfo, valueToEquals,
-                comparisonType);
+            MethodInfo equalsMethodInfo;
+            if (stringFilter.StringComparison != null)
+            {
+                equalsMethodInfo = typeof(string).GetMethod(methodName, new[] {typeof(string), typeof(StringComparison)});
+
+
+                var comparisonType = Expression.Constant(stringFilter.StringComparison);
+
+                methodCallExpression = Expression.Call(PropertyOrField, equalsMethodInfo, valueToEquals,
+                    comparisonType);
+            }
+            else
+            {
+                equalsMethodInfo = typeof(string).GetMethod(methodName, new[] { typeof(string)});
+
+                methodCallExpression = Expression.Call(PropertyOrField, equalsMethodInfo, valueToEquals);
+            }
             var lambda = methodCallExpression.LambdaExpressionBuilder<TEntity>(Item);
-            return lambda;
+                return lambda;
         }
 
         private Expression<Func<TEntity, bool>> DateTimeExpr(DateTimeFromToFilter dateTimeFromToFilter,
