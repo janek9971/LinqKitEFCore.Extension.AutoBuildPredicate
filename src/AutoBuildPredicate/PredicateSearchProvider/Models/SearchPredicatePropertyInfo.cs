@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq.Expressions;
-using AutoSearchEntities.PredicateSearchProvider.CustomUtilities.Attributes;
+using AutoBuildPredicate.PredicateSearchProvider.CustomUtilities.Attributes;
 
 #pragma warning disable 1591
 
-namespace AutoSearchEntities.PredicateSearchProvider.Models
+namespace AutoBuildPredicate.PredicateSearchProvider.Models
 {
     public class SearchPredicatePropertyInfo
     {

@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 #pragma warning disable 1591
 
-namespace AutoSearchEntities.PredicateSearchProvider.CustomUtilities.Attributes
+namespace AutoBuildPredicate.PredicateSearchProvider.CustomUtilities.Attributes
 {
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     [EditorBrowsable(EditorBrowsableState.Never)]

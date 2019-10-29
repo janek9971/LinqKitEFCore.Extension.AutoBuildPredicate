@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using AutoSearchEntities.PredicateSearchProvider.Helpers;
+using AutoBuildPredicate.PredicateSearchProvider.CustomUtilities.Enums;
+using AutoBuildPredicate.PredicateSearchProvider.Helpers;
 using JetBrains.Annotations;
 
-namespace AutoSearchEntities.PredicateSearchProvider.Models
+namespace AutoBuildPredicate.PredicateSearchProvider.Models
 {
     public class NumericFilter<T> : IEquatable<NumericFilter<T>>
     {

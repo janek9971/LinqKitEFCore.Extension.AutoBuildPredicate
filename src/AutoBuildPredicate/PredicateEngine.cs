@@ -1,7 +1,7 @@
-﻿using AutoSearchEntities.PredicateSearchProvider;
+﻿using AutoBuildPredicate.PredicateSearchProvider;
 using LinqKit;
 
-namespace AutoSearchEntities
+namespace AutoBuildPredicate
 {
     public class PredicateEngine<TEntity> where TEntity : class, new()
     {

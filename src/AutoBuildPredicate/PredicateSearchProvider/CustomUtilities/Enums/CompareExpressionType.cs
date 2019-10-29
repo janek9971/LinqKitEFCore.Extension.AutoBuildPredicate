@@ -1,4 +1,4 @@
-﻿namespace AutoSearchEntities.PredicateSearchProvider.Models
+﻿namespace AutoBuildPredicate.PredicateSearchProvider.CustomUtilities.Enums
 {
     public enum CompareExpressionType
     {

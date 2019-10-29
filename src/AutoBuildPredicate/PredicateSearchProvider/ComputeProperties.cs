@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using AutoSearchEntities.PredicateSearchProvider.CustomUtilities.Attributes;
-using AutoSearchEntities.PredicateSearchProvider.Helpers;
-using AutoSearchEntities.PredicateSearchProvider.Models;
+using AutoBuildPredicate.PredicateSearchProvider.CustomUtilities.Attributes;
+using AutoBuildPredicate.PredicateSearchProvider.Helpers;
+using AutoBuildPredicate.PredicateSearchProvider.Models;
 using PredicateBitwiseOperation =
-    AutoSearchEntities.PredicateSearchProvider.CustomUtilities.Attributes.PredicateBitwiseOperation;
+    AutoBuildPredicate.PredicateSearchProvider.CustomUtilities.Attributes.PredicateBitwiseOperation;
 
-namespace AutoSearchEntities.PredicateSearchProvider
+namespace AutoBuildPredicate.PredicateSearchProvider
 {
     internal partial class AutoPredicateBuilder<TEntity>
     {
@@ -72,14 +72,14 @@ namespace AutoSearchEntities.PredicateSearchProvider
 
                     if (!string.IsNullOrEmpty(path))
                     {
-                        if (!string.IsNullOrEmpty(AssemblyName) && !string.IsNullOrEmpty(TypeName))
-                        {
-                            inst = Inst(path, AssemblyName, TypeName);
-                        }
-                        else if (!string.IsNullOrEmpty(fieldPathSearchAttribute.AssemblyName) &&
-                                 !string.IsNullOrEmpty(fieldPathSearchAttribute.TypeName))
+                        if (!string.IsNullOrEmpty(fieldPathSearchAttribute.AssemblyName) &&
+                            !string.IsNullOrEmpty(fieldPathSearchAttribute.TypeName))
                         {
                             inst = Inst(path, fieldPathSearchAttribute.AssemblyName, fieldPathSearchAttribute.TypeName);
+                        }
+                        else if (!string.IsNullOrEmpty(AssemblyName) && !string.IsNullOrEmpty(TypeName))
+                        {
+                            inst = Inst(path, AssemblyName, TypeName);
                         }
                         else
                         {

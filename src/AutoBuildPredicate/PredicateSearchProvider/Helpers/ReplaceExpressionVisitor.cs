@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace AutoSearchEntities.PredicateSearchProvider.Helpers
+namespace AutoBuildPredicate.PredicateSearchProvider.Helpers
 {
     internal class ReplaceExpressionVisitor
         : ExpressionVisitor

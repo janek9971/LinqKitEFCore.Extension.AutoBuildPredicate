@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using AutoSearchEntities.PredicateSearchProvider.CustomUtilities.Enums;
-using AutoSearchEntities.PredicateSearchProvider.Helpers;
-using AutoSearchEntities.PredicateSearchProvider.Models;
-using CollectionExtensions = AutoSearchEntities.PredicateSearchProvider.Helpers.CollectionExtensions;
+using AutoBuildPredicate.PredicateSearchProvider.CustomUtilities.Enums;
+using AutoBuildPredicate.PredicateSearchProvider.Helpers;
+using AutoBuildPredicate.PredicateSearchProvider.Models;
+using CollectionExtensions = AutoBuildPredicate.PredicateSearchProvider.Helpers.CollectionExtensions;
 
-namespace AutoSearchEntities.PredicateSearchProvider
+namespace AutoBuildPredicate.PredicateSearchProvider
 {
     internal partial class AutoPredicateBuilder<TEntity>
     {

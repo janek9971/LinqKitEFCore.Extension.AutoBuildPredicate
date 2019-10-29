@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using AutoSearchEntities.PredicateSearchProvider.CustomUtilities.Attributes;
-using AutoSearchEntities.PredicateSearchProvider.Models;
+using AutoBuildPredicate.PredicateSearchProvider.CustomUtilities.Attributes;
+using AutoBuildPredicate.PredicateSearchProvider.CustomUtilities.Enums;
+using AutoBuildPredicate.PredicateSearchProvider.Models;
 using LinqKit;
 
-namespace AutoSearchEntities.PredicateSearchProvider.Helpers
+namespace AutoBuildPredicate.PredicateSearchProvider.Helpers
 {
     internal static class EnumExtensions
     {

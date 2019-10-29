@@ -1,7 +1,7 @@
 ﻿using System;
-using AutoSearchEntities.PredicateSearchProvider.CustomUtilities.Enums;
+using AutoBuildPredicate.PredicateSearchProvider.CustomUtilities.Enums;
 
-namespace AutoSearchEntities.PredicateSearchProvider.Models
+namespace AutoBuildPredicate.PredicateSearchProvider.Models
 {
    public class StringFilter
    {

@@ -1,4 +1,4 @@
-﻿namespace AutoSearchEntities.PredicateSearchProvider.CustomUtilities.Enums
+﻿namespace AutoBuildPredicate.PredicateSearchProvider.CustomUtilities.Enums
 {
     public enum StringSearchOption
     {

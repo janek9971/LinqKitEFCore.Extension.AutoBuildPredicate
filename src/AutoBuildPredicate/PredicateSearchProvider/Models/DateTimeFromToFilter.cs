@@ -1,8 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using AutoBuildPredicate.PredicateSearchProvider.CustomUtilities.Enums;
 using JetBrains.Annotations;
 
-namespace AutoSearchEntities.PredicateSearchProvider.Models
+namespace AutoBuildPredicate.PredicateSearchProvider.Models
 {
     public class DateTimeFromToFilter
     {

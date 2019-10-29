@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
-using AutoSearchEntities.PredicateSearchProvider.Helpers;
+using AutoBuildPredicate.PredicateSearchProvider.Helpers;
 using LinqKit;
 
-namespace AutoSearchEntities.PredicateSearchProvider
+namespace AutoBuildPredicate.PredicateSearchProvider
 {
     internal partial class AutoPredicateBuilder<TEntity> where TEntity : class, new()
     {

@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace AutoSearchEntities.PredicateSearchProvider.Models
+namespace AutoBuildPredicate.PredicateSearchProvider.Models
 {
     public class PredicateBuilderParams
     {

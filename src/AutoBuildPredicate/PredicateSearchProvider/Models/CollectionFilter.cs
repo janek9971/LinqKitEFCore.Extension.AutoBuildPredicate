@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace AutoSearchEntities.PredicateSearchProvider.Models
+namespace AutoBuildPredicate.PredicateSearchProvider.Models
 {
    public class CollectionFilter<T>
     {
