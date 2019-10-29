@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data.SqlTypes;
-using System.Linq.Expressions;
 using AutoSearchEntities.PredicateSearchProvider.Helpers;
 using JetBrains.Annotations;
 

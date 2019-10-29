@@ -8,6 +8,5 @@ namespace AutoSearchEntities.PredicateSearchProvider.CustomUtilities.Attributes
     public class AdditionalSearchOptions : Attribute
     {
         public string EntityPropertyName { get; set; }
-//        public StringMethods StringSearchType { get; set; }
     }
 }

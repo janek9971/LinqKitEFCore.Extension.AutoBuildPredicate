@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
-using AutoSearchEntities.PredicateSearchProvider.CustomUtilities.Attributes;
-using AutoSearchEntities.PredicateSearchProvider.CustomUtilities.Enums;
 using AutoSearchEntities.PredicateSearchProvider.Helpers;
-using AutoSearchEntities.PredicateSearchProvider.Models;
 using LinqKit;
 
 namespace AutoSearchEntities.PredicateSearchProvider
@@ -50,21 +44,13 @@ namespace AutoSearchEntities.PredicateSearchProvider
                     if (!value.InstanceTypeOfProperty.HasProperty(key.PropertyType, value.EntityName))
                         throw new ArgumentException(
                             $"Given property with this type = {key.PropertyType} does not exist for instance: {value.InstanceTypeOfProperty.Name}\r\nDid you forget to add NotThisEntityPropertyAttribute or passed wrong type?",
-                            nameof(key.Name)); //TODO TEST
-                    //                        propertyInfoByPropName.Remove(key); 
+                            nameof(key.Name)); 
                 }
 
                 PredicateBuilderByExpressions(propertyInfoByPropName);
             }
         }
 
-//        internal List<Expression<Func<TEntity, bool>>> GetCustomExpressions<TU>(TU filter)
-//            where TU : class, ICustomExpressions<TEntity>
-//        {
-//            var expressionsBuilder = new ModelExpressions<TEntity>.ExpressionsBuilder(Item);
-//            filter?.Expressions(expressionsBuilder);
-//
-//            return expressionsBuilder.Build().GetExpressions();
-//        }
+
     }
 }
