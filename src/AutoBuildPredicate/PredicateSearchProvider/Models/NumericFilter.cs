@@ -50,6 +50,7 @@ namespace AutoBuildPredicate.PredicateSearchProvider.Models
     public class NumericValue<T> : IEquatable<NumericValue<T>>
     {
         private T _value;
+        [UsedImplicitly]
         public T Value
         {
             get => _value;

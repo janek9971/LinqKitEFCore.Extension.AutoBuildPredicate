@@ -90,7 +90,7 @@ namespace AutoBuildPredicate.PredicateSearchProvider
         {
             var genericType = FilterPropertyType.GetGenericArguments().First();
             var methodInfo = typeof(CollectionExtensions)
-                .GetMethod(nameof(CollectionExtensions.ContainsMethod), BindingFlags.Public | BindingFlags.Static);
+                .GetMethod(nameof(CollectionExtensions.ContainsMethodDelegate), BindingFlags.Public | BindingFlags.Static);
 
             var valueToEquals = Expression.Constant(FilterPropertyValue);
 

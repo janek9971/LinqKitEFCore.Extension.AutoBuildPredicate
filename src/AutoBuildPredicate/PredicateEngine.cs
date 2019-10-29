@@ -1,8 +1,10 @@
 ﻿using AutoBuildPredicate.PredicateSearchProvider;
+using JetBrains.Annotations;
 using LinqKit;
 
 namespace AutoBuildPredicate
 {
+    [PublicAPI]
     public class PredicateEngine<TEntity> where TEntity : class, new()
     {
         private readonly string _assemblyName;
