@@ -7,14 +7,14 @@
     <Authors>Krzysztof Jankowski</Authors>
     <Company>krzysztof.jankowski</Company>
     <Product>Extension for EFCoreLinqKit</Product>
-    <PackageId>LinqKitEFCore.Extension.AutoSearchEntities</PackageId>
-    <Version>0.0.6</Version>
+    <PackageId>LinqKitEFCore.Extension.AutoBuildPredicate</PackageId>
+    <Version>0.1.0-beta</Version>
     <NeutralLanguage>en</NeutralLanguage>
-    <RepositoryUrl>https://github.com/janek9971/LinqKitEFCore.Extension.AutoSearchEntities</RepositoryUrl>
+    <RepositoryUrl>https://github.com/janek9971/LinqKitEFCore.Extension.AutoBuildPredicate</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 	    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-	    <PackageProjectUrl>https://github.com/janek9971/LinqKitEFCore.Extension.AutoSearchEntities</PackageProjectUrl>
-	    <Description>Provides auto generated predicate Expression&lt;Func&lt;TEntity,Boolean&gt;&gt;through a filtering model</Description>
+	    <PackageProjectUrl>https://github.com/janek9971/LinqKitEFCore.Extension.AutoBuildPredicate</PackageProjectUrl>
+	    <Description>Provides auto generated predicate ExpressionStarter&lt;TEntity&gt; through a filtering model</Description>
 
   </PropertyGroup>
 
