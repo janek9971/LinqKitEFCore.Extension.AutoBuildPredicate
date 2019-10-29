@@ -1,41 +1,36 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using AutoSearchEntities.PredicateSearchProvider;
-using AutoSearchEntities.PredicateSearchProvider.CustomExpressionProviders;
 using LinqKit;
 
 namespace AutoSearchEntities
 {
     public class PredicateEngine<TEntity> where TEntity : class, new()
     {
-        private ParameterExpression Item { get; }
-//        private ExpressionStarter<TEntity> Predicate { get; set; }
+        private readonly string _assemblyName;
+        private readonly string _typeName;
+        private readonly bool _assemblyDefined;
         public PredicateEngine()
         {
-            Item = Expression.Parameter(typeof(TEntity), "entity");
-
+            _assemblyDefined = false;
         }
-        public ExpressionStarter<TEntity> PredicateProvidedByCustomExpressions<TU>(TU filter = default) 
-            where TU : class, ICustomExpressions<TEntity>
+        public PredicateEngine(string assemblyName, string typeName)
         {
-            var predicateCore =
-                PredicateBuilderMapping<TEntity>.PredicateCore(filter, Item);
-
-            var expressions = PredicateBuilderMapping<TEntity>.GetCustomExpressions(filter, Item);
-
-            if (!expressions.Any()) return predicateCore;
-            foreach (var filterExpression in expressions)
-                predicateCore = predicateCore.And(filterExpression);
-
-            return predicateCore;
+            _assemblyName = assemblyName;
+            _typeName = typeName;
+            _assemblyDefined = true;
         }
-        public ExpressionStarter<TEntity> SimplePredicate<TU>(TU filter = default) where TU : class
+        public ExpressionStarter<TEntity> PredicateByFilter<TU>(TU filter = default) where TU : class
         {
+            var core = _assemblyDefined ? new AutoPredicateBuilder<TEntity>(_assemblyName, _typeName) : new AutoPredicateBuilder<TEntity>();
 
-            var predicateCore =
-                PredicateBuilderMapping<TEntity>.PredicateCore(filter, Item);
+            core.PredicateCore(filter);
 
-            return predicateCore;
+            return core.AutoPredicate;
         }
+
+   
     }
 }
