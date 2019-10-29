@@ -3,9 +3,9 @@ using System.ComponentModel;
 
 namespace AutoSearchEntities.PredicateSearchProvider.CustomUtilities.Attributes
 {
-    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public abstract class FieldAttributeBase : Attribute
+    public class NotThisEntityProperty : Attribute
     {
     }
 }

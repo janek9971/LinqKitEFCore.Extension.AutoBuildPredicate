@@ -8,9 +8,5 @@
         OrElse
     }
 
-    public enum BitwiseOperation
-    {
-        And,
-        Or
-    }
+ 
 }
