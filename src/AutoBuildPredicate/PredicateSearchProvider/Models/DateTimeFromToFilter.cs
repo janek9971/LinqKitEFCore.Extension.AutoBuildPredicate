@@ -9,6 +9,7 @@ namespace AutoBuildPredicate.PredicateSearchProvider.Models
     {
         [Required] [NotNull] public DateTimeValue DateFrom { get; set; } 
         public DateTimeValue DateTo { get; set; }
+        public bool TruncateTime { get; set; } = true;
     }
 
     public class DateTimeValue

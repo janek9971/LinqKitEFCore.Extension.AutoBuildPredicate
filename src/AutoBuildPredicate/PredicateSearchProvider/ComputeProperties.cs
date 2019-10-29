@@ -42,7 +42,7 @@ namespace AutoBuildPredicate.PredicateSearchProvider
                 var entityName = propertyName;
 
                 var isCustomSearchPath = Attribute.IsDefined(property, typeof(CustomSearchPath));
-                var isAdditionalSearchOptions = Attribute.IsDefined(property, typeof(AdditionalSearchOptions));
+                var isAdditionalSearchOptions = Attribute.IsDefined(property, typeof(EntityPropertyName));
                 var isBitwiseOperationDefined = Attribute.IsDefined(property, typeof(PredicateBitwiseOperation));
                 if (property.PropertyType.IsGenericList() || property.PropertyType.IsArray)
                 {
@@ -54,7 +54,7 @@ namespace AutoBuildPredicate.PredicateSearchProvider
                     if (!isAdditionalSearchOptions)
                     {
                         throw new Exception(
-                            $"Collections name must be passed by an attribute {nameof(AdditionalSearchOptions)}.{nameof(AdditionalSearchOptions.EntityPropertyName)}");
+                            $"Collections name must be passed by an attribute {nameof(EntityPropertyName)}.{nameof(EntityPropertyName.Name)}");
                     }
 
                     propertyInfoForPredicate.IsEntityTypeProperty = false;
@@ -100,9 +100,9 @@ namespace AutoBuildPredicate.PredicateSearchProvider
 
                 if (isAdditionalSearchOptions)
                 {
-                    var fieldPathSearchAttribute = property.GetCustomAttribute<AdditionalSearchOptions>();
+                    var fieldPathSearchAttribute = property.GetCustomAttribute<EntityPropertyName>();
 
-                    entityName = fieldPathSearchAttribute.EntityPropertyName ?? propertyName;
+                    entityName = fieldPathSearchAttribute.Name ?? propertyName;
 
 //                    var name = TryAddPath(entityName, path);
 //                    propertyInfoForPredicate.PropertyOrField = Item.GetPropertyOrField(name);

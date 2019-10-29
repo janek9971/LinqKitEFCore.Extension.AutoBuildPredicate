@@ -7,8 +7,6 @@ namespace AutoBuildPredicate.PredicateSearchProvider.Models
    {
        public string Str { get; set; }
        public StringSearchOption StringSearchOption { get; set; } = StringSearchOption.Equals;
-       public StringComparison? StringComparison { get; set; } = null;
+       public StringComparison? StringComparison { get; set; }
    }
-
-
 }

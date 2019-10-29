@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using AutoBuildPredicate.PredicateSearchProvider.CustomUtilities.Attributes;
 using AutoBuildPredicate.PredicateSearchProvider.CustomUtilities.Enums;
 using AutoBuildPredicate.PredicateSearchProvider.Models;
@@ -30,7 +31,7 @@ namespace AutoBuildPredicate.PredicateSearchProvider.Helpers
 
     internal static class CollectionExtensions
     {
-        public static Func<T, bool> ContainsMethodDelegate<T>(this ICollection<T> collection, Delegates type)
+        public static Func<T, bool> ContainsMethodDelegate<T>(this ICollection<T> collection)
         {
             Func<T, bool> del = collection.Contains<T>;
             return del;
@@ -188,7 +189,8 @@ namespace AutoBuildPredicate.PredicateSearchProvider.Helpers
 
         public static bool HasProperty(this Type obj, Type propertyType, string propertyName)
         {
-            var propertyOfObj = obj.GetProperty(propertyName.ToUpper().Replace("_", string.Empty));
+            var propert = obj.GetProperties();
+            var propertyOfObj = obj.GetProperty(propertyName.ToUpper().Replace("_", string.Empty), BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
 
             if (propertyOfObj == null)
             {

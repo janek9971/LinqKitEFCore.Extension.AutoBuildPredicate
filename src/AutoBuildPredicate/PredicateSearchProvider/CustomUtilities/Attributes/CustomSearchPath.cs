@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using JetBrains.Annotations;
 
 #pragma warning disable 1591
 
@@ -7,6 +8,7 @@ namespace AutoBuildPredicate.PredicateSearchProvider.CustomUtilities.Attributes
 {
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     [EditorBrowsable(EditorBrowsableState.Never)]
+    [PublicAPI]
     public class CustomSearchPath : Attribute
     {
         public CustomSearchPath(string[] searchPath)

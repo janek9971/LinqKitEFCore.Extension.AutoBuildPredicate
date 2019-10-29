@@ -22,7 +22,7 @@ namespace AutoBuildPredicate.PredicateSearchProvider
                 FilterPropertyValue = searchPredicatePropertyInfo.PropertyValue;
                 FilterPropertyType = prop.PropertyType;
                 EntityPropertyType = searchPredicatePropertyInfo.InstanceTypeOfProperty
-                    .GetProperty(EntityName.ToUpper())?.PropertyType;
+                    .GetProperty(EntityName.ToUpper(), BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance)?.PropertyType;
                 var predicateBitwiseOperation = searchPredicatePropertyInfo.PredicateBitwiseOperation;
 
                 if (FilterPropertyValue is string _)
@@ -97,7 +97,7 @@ namespace AutoBuildPredicate.PredicateSearchProvider
             Type[] genericArguments = {genericType};
             MethodInfo genericMethodInfo = methodInfo.MakeGenericMethod(genericArguments);
             Delegate @delegate = (Delegate) genericMethodInfo.Invoke(null,
-                new[] {FilterPropertyValue, Delegates.ContainsEqualityComparer});
+                new[] {FilterPropertyValue});
 
             var methodCallExpression = Expression.Call(null, @delegate.Method, valueToEquals, PropertyOrField);
 
@@ -215,21 +215,43 @@ namespace AutoBuildPredicate.PredicateSearchProvider
                 toDate = dateTimeValueDateTo.DateTime;
                 if (toDate.HasValue)
                 {
-                    var rightToDate = Expression.Constant(toDate.Value.Date);
+                    ConstantExpression rightToDate;
+                    if (dateTimeFromToFilter.TruncateTime)
+                    {
+                        rightToDate = Expression.Constant(toDate.Value.Date, typeof(DateTime));
+                    }
+                    else
+                    {
+                        rightToDate = Expression.Constant(toDate, typeof(DateTime?));
+                    }
+
                     dateToInfoTuple = (rightToDate, dateToExprType);
                 }
             }
 
-            var rightFromDate = Expression.Constant(fromDate.Value.Date);
+            ConstantExpression rightFromDate;
+
+            if (dateTimeFromToFilter.TruncateTime)
+            {
+                rightFromDate = Expression.Constant(fromDate.Value.Date , typeof(DateTime));
+            }
+            else
+            {
+                rightFromDate = Expression.Constant(fromDate, typeof(DateTime?));
+            }
+            //            var rightFromDate = Expression.Constant(fromDate.Value.Date);
 
             var dateFromExprType =
                 dateTimeValueDateFrom.ExpressionType ?? CompareExpressionType.GreaterThanOrEqual;
             var dateFromInfoTuple = (rightFromDate, compareExpressionType: dateFromExprType);
             Expression<Func<TEntity, bool>> lambdaExpr;
             if (EntityPropertyType.IsNullable())
-
             {
-                var ifTrue = Expression.Property(Expression.Property(PropertyOrField, "Value"), "Date")
+                MemberExpression memberExpression = dateTimeFromToFilter.TruncateTime
+                    ? Expression.Property(Expression.Property(PropertyOrField, "Value"), "Date")
+                    : PropertyOrField;
+
+                var ifTrue = memberExpression
                     .GreaterLessThanBuilderExpressions(dateFromInfoTuple, dateToInfoTuple,
                         BitwiseOperationExpressions.AndAlso);
 
@@ -249,8 +271,15 @@ namespace AutoBuildPredicate.PredicateSearchProvider
             }
             else
             {
-                var entityPropTruncated = Expression.Property(PropertyOrField, "Date");
+                var entityPropTruncated = dateTimeFromToFilter.TruncateTime
+                    ? Expression.Property(PropertyOrField, "Date")
+                    : PropertyOrField;
 
+
+                rightFromDate = Expression.Constant(dateTimeFromToFilter.TruncateTime ? fromDate.Value.Date : fromDate, typeof(DateTime));
+                dateFromInfoTuple = (rightFromDate, compareExpressionType: dateFromExprType);
+                var rightToDate = Expression.Constant(dateTimeFromToFilter.TruncateTime ? toDate.Value.Date : toDate, typeof(DateTime));
+                dateToInfoTuple = (rightToDate, dateToExprType);
                 var dateTimeExpr =
                     entityPropTruncated.GreaterLessThanBuilderExpressions(dateFromInfoTuple, dateToInfoTuple,
                         BitwiseOperationExpressions.AndAlso);

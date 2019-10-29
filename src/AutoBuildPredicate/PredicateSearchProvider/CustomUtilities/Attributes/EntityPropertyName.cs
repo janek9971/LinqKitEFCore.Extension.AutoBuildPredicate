@@ -5,8 +5,8 @@ namespace AutoBuildPredicate.PredicateSearchProvider.CustomUtilities.Attributes
 {
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field )]
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public class AdditionalSearchOptions : Attribute
+    public class EntityPropertyName : Attribute
     {
-        public string EntityPropertyName { get; set; }
+        public string Name { get; set; }
     }
 }
