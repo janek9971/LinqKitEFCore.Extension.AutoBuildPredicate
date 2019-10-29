@@ -104,22 +104,18 @@ namespace AutoSearchEntities.PredicateSearchProvider
 
                     entityName = fieldPathSearchAttribute.EntityPropertyName ?? propertyName;
 
-                    var name = path + "@" + entityName;
-                    propertyInfoForPredicate.PropertyOrField = Item.GetPropertyOrField(name);
+//                    var name = TryAddPath(entityName, path);
+//                    propertyInfoForPredicate.PropertyOrField = Item.GetPropertyOrField(name);
                     //                    searchPredicatePropertyInfo.PredicateBuilderParams.StringSearchMethod =
                     //                        fieldPathSearchAttribute.StringSearchType;
                 }
-                else
-                {
-                    var name = entityName;
-                    if (!string.IsNullOrEmpty(path))
-                    {
-                        name = path + "@" + entityName;
-                    }
-
-                    propertyInfoForPredicate.PropertyOrField =
-                        Item.GetPropertyOrField(name);
-                }
+//                else
+//                {
+////                    var name = TryAddPath(entityName, path);
+////                    propertyInfoForPredicate.PropertyOrField =Item.GetPropertyOrField(name);
+//                }
+                var name = TryAddPath(entityName, path);
+                propertyInfoForPredicate.PropertyOrField = Item.GetPropertyOrField(name);
 
                 propertyInfoForPredicate.EntityName = entityName;
                 propertyInfoForPredicate.InstanceTypeOfProperty = inst.GetType();
@@ -140,6 +136,17 @@ namespace AutoSearchEntities.PredicateSearchProvider
             }
 
             return propertyInfoByPropName;
+        }
+
+        private static string TryAddPath(string entityName, string path)
+        {
+            var name = entityName;
+            if (!string.IsNullOrEmpty(path))
+            {
+                name = path + "@" + entityName;
+            }
+
+            return name;
         }
 
         private static object Inst(string path, string assemblyName, string typeName)
