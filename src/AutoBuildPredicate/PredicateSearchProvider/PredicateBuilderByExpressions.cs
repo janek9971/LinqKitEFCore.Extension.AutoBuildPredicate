@@ -275,11 +275,6 @@ namespace AutoBuildPredicate.PredicateSearchProvider
                     ? Expression.Property(PropertyOrField, "Date")
                     : PropertyOrField;
 
-
-                rightFromDate = Expression.Constant(dateTimeFromToFilter.TruncateTime ? fromDate.Value.Date : fromDate, typeof(DateTime));
-                dateFromInfoTuple = (rightFromDate, compareExpressionType: dateFromExprType);
-                var rightToDate = Expression.Constant(dateTimeFromToFilter.TruncateTime ? toDate.Value.Date : toDate, typeof(DateTime));
-                dateToInfoTuple = (rightToDate, dateToExprType);
                 var dateTimeExpr =
                     entityPropTruncated.GreaterLessThanBuilderExpressions(dateFromInfoTuple, dateToInfoTuple,
                         BitwiseOperationExpressions.AndAlso);
