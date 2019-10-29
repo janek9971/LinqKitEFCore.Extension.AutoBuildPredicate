@@ -1,3 +1,3 @@
-# LinqKitEFCore.Extension.AutoSearchEntities
+# LinqKitEFCore.Extension.AutoBuildPredicate
 
 Coming soon :)
