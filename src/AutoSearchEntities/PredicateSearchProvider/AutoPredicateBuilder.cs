@@ -39,7 +39,7 @@ namespace AutoSearchEntities.PredicateSearchProvider
         private Type EntityPropertyType { get; set; }
 
 
-        internal void PredicateCore<TU>(TU filter, List<Expression<Func<TEntity,bool>>> list =default) where TU : class
+        internal void PredicateCore<TU>(TU filter) where TU : class
 
         {
             var propertyInfoByPropName = ComputeProperties(filter);
