@@ -30,7 +30,7 @@ namespace AutoBuildPredicate.PredicateSearchProvider.Helpers
 
     internal static class CollectionExtensions
     {
-        public static Func<T, bool> ContainsMethod<T>(this ICollection<T> collection, Delegates type)
+        public static Func<T, bool> ContainsMethodDelegate<T>(this ICollection<T> collection, Delegates type)
         {
             Func<T, bool> del = collection.Contains<T>;
             return del;
