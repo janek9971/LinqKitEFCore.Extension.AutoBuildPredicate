@@ -100,20 +100,18 @@ namespace AutoBuildPredicate.PredicateSearchProvider.Helpers
         }
 
         public static Expression GreaterLessThanBuilderExpressions(this MemberExpression leftExpression,
-            (Expression expr, CompareExpressionType? exprType) rightFromDate,
-            (Expression expr, CompareExpressionType? exprType) rightToDate,
+            ExpressionDateTimeInfo leftExpr,
+            ExpressionDateTimeInfo rightExpr,
             BitwiseOperationExpressions bitwiseOperationExpressions)
         {
-            var (expression, compareExpressionType) = rightFromDate;
-            var greaterThanOrEqualBody = Expression.MakeBinary(compareExpressionType.ConvertByName<ExpressionType>(),
+            var greaterThanOrEqualBody = Expression.MakeBinary(leftExpr.ExpressionType.ConvertByName<ExpressionType>(),
                 leftExpression,
-                expression);
+                leftExpr.Constant);
 
-            var (expr, exprType) = rightToDate;
-            if (expr == null) return greaterThanOrEqualBody;
-            var lessThanOrEqualBody = Expression.MakeBinary(exprType.ConvertByName<ExpressionType>(),
+            if (rightExpr?.Constant == null) return greaterThanOrEqualBody;
+            var lessThanOrEqualBody = Expression.MakeBinary(rightExpr.ExpressionType.ConvertByName<ExpressionType>(),
                 leftExpression,
-                expr);
+                rightExpr.Constant);
 
             return greaterThanOrEqualBody.ChooseExpressionType(bitwiseOperationExpressions, lessThanOrEqualBody);
         }

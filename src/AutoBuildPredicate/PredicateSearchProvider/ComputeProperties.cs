@@ -5,6 +5,7 @@ using System.Reflection;
 using AutoBuildPredicate.PredicateSearchProvider.CustomUtilities.Attributes;
 using AutoBuildPredicate.PredicateSearchProvider.Helpers;
 using AutoBuildPredicate.PredicateSearchProvider.Models;
+using static AutoBuildPredicate.PredicateSearchProvider.Helpers.Utilities;
 using PredicateBitwiseOperation =
     AutoBuildPredicate.PredicateSearchProvider.CustomUtilities.Attributes.PredicateBitwiseOperation;
 
@@ -75,11 +76,11 @@ namespace AutoBuildPredicate.PredicateSearchProvider
                         if (!string.IsNullOrEmpty(fieldPathSearchAttribute.AssemblyName) &&
                             !string.IsNullOrEmpty(fieldPathSearchAttribute.TypeName))
                         {
-                            inst = Inst(path, fieldPathSearchAttribute.AssemblyName, fieldPathSearchAttribute.TypeName);
+                            inst = GetInstanceOfNestedEntity(path, fieldPathSearchAttribute.AssemblyName, fieldPathSearchAttribute.TypeName);
                         }
                         else if (!string.IsNullOrEmpty(AssemblyName) && !string.IsNullOrEmpty(TypeName))
                         {
-                            inst = Inst(path, AssemblyName, TypeName);
+                            inst = GetInstanceOfNestedEntity(path, AssemblyName, TypeName);
                         }
                         else
                         {
@@ -104,24 +105,13 @@ namespace AutoBuildPredicate.PredicateSearchProvider
 
                     entityName = fieldPathSearchAttribute.Name ?? propertyName;
 
-//                    var name = TryAddPath(entityName, path);
-//                    propertyInfoForPredicate.PropertyOrField = Item.GetPropertyOrField(name);
-                    //                    searchPredicatePropertyInfo.PredicateBuilderParams.StringSearchMethod =
-                    //                        fieldPathSearchAttribute.StringSearchType;
                 }
-//                else
-//                {
-////                    var name = TryAddPath(entityName, path);
-////                    propertyInfoForPredicate.PropertyOrField =Item.GetPropertyOrField(name);
-//                }
                 var name = TryAddPath(entityName, path);
                 propertyInfoForPredicate.PropertyOrField = Item.GetPropertyOrField(name);
 
                 propertyInfoForPredicate.EntityName = entityName;
                 propertyInfoForPredicate.InstanceTypeOfProperty = inst.GetType();
 
-
-                //                var value = property.GetValue(filter, null);
 
                 switch (value)
                 {
@@ -138,34 +128,6 @@ namespace AutoBuildPredicate.PredicateSearchProvider
             return propertyInfoByPropName;
         }
 
-        private static string TryAddPath(string entityName, string path)
-        {
-            var name = entityName;
-            if (!string.IsNullOrEmpty(path))
-            {
-                name = path + "@" + entityName;
-            }
 
-            return name;
-        }
-
-        private static object Inst(string path, string assemblyName, string typeName)
-        {
-            var entityModelName = assemblyName;
-
-            var lastInPath = path.Split('@').Last();
-
-            var qualifiedName =
-                Assembly.CreateQualifiedName(entityModelName,
-                    $"{entityModelName}.{typeName}.{lastInPath.Trim('@')}") ?? throw new InvalidOperationException(
-                    $"QualifiedName does not find for given parameters: {nameof(entityModelName)} and {nameof(typeName)}");
-
-
-            var type = Type.GetType(qualifiedName);
-            var inst = Activator.CreateInstance(
-                type ?? throw new InvalidOperationException($"Could not create instance of {qualifiedName}"));
-
-            return inst;
-        }
     }
 }
