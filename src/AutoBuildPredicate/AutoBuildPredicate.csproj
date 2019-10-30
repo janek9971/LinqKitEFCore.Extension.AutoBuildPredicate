@@ -8,13 +8,14 @@
     <Company>krzysztof.jankowski</Company>
     <Product>Extension for EFCoreLinqKit</Product>
     <PackageId>LinqKitEFCore.Extension.AutoBuildPredicate</PackageId>
-    <Version>0.1.4</Version>
+    <Version>0.1.5</Version>
     <NeutralLanguage>en</NeutralLanguage>
     <RepositoryUrl>https://github.com/janek9971/LinqKitEFCore.Extension.AutoBuildPredicate</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 	    <PackageLicenseExpression>MIT</PackageLicenseExpression>
 	    <PackageProjectUrl>https://github.com/janek9971/LinqKitEFCore.Extension.AutoBuildPredicate</PackageProjectUrl>
-	    <Description>Provides auto generated predicate ExpressionStarter&lt;TEntity&gt; through a filtering model</Description>
+	    <Description>Provides auto generated predicate ExpressionStarter&lt;TEntity&gt; through a filtering model, using LinqKit.Microsoft.EntityFrameworkCore</Description>
+	    <PackageTags>linqKit, EF, Entity, EntityFramework, linq, predicate</PackageTags>
 
   </PropertyGroup>
 
