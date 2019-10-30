@@ -77,7 +77,7 @@ StringComparison where default value is none
 This values have to be nullable type!
 * #### DateTimeFromToFilter<br />
     With DateTimeFromToFilter you can pass **DateFrom** (Required) or/and  **DateTo** and set CompareExpressionType(Equal, GreaterThan...).
-* CollectionFilter<br />
+* #### CollectionFilter<br />
     This class accepts generic List, it is used to build predicate : 
     ```c#
     entity => Collection.Contains(entity.Property) 
