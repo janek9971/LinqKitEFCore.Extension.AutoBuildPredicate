@@ -185,18 +185,19 @@ namespace AutoBuildPredicate.PredicateSearchProvider.Helpers
             //            return (type.GetInterface("IEnumerable") != null);
         }
 
-        public static bool HasProperty(this Type obj, Type propertyType, string propertyName)
+        public static bool HasProperty(this Type entity, Type propertyType, string propertyName, out string entityType)
         {
-            var propert = obj.GetProperties();
-            var propertyOfObj = obj.GetProperty(propertyName.ToUpper().Replace("_", string.Empty), BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+            entityType = default;
+            var propertyOfObj = entity.GetProperty(propertyName.ToUpper().Replace("_", string.Empty), BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
 
             if (propertyOfObj == null)
             {
                 return false;
             }
 
-
             var objType = Nullable.GetUnderlyingType(propertyOfObj.PropertyType) ?? propertyOfObj.PropertyType;
+
+            entityType = objType.Name;
 
             if (propertyType == typeof(DateTimeFromToFilter))
             {

@@ -41,9 +41,9 @@ namespace AutoBuildPredicate.PredicateSearchProvider
             {
                 foreach (var (key, value) in propertyInfoByPropName)
                 {
-                    if (!value.InstanceTypeOfProperty.HasProperty(key.PropertyType, value.EntityName))
+                    if (!value.InstanceTypeOfProperty.HasProperty(key.PropertyType, value.EntityName, out var entityType))
                         throw new ArgumentException(
-                            $"Given property with this type = {key.PropertyType} does not exist for instance: {value.InstanceTypeOfProperty.Name}\r\nDid you forget to add NotThisEntityPropertyAttribute or passed wrong type?",
+                            $"Given property with this type = {key.PropertyType} does not exist for instance: {value.InstanceTypeOfProperty.Name} and type: {entityType}\r\nDid you forget to add NotThisEntityPropertyAttribute or passed wrong type?",
                             nameof(key.Name)); 
                 }
 

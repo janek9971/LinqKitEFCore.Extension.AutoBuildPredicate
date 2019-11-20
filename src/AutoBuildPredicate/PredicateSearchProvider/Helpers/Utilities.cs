@@ -61,6 +61,11 @@ namespace AutoBuildPredicate.PredicateSearchProvider.Helpers
                 //                        (rightToDate, dateToExprType);
             }
 
+            else
+            {
+                dateToExprInfo = new ExpressionDateTimeInfo();
+            }
+
             var dateFromExprInfo = new ExpressionDateTimeInfo { Constant = fromDateExpressionConstant, ExpressionType = fromDateExprType, DateTime = fromDate };
 
             return (dateFromExprInfo, dateToExprInfo);

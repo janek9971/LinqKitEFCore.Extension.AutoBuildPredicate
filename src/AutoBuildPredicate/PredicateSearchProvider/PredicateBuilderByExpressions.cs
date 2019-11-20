@@ -228,11 +228,11 @@ namespace AutoBuildPredicate.PredicateSearchProvider
                             typeof(DateTime?)),
                         ExpressionType = fromDateExpressionInfo.ExpressionType
                     },
-                    toDateExpressionInfo.DateTime == null
+                    toDateExpressionInfo?.DateTime == null
                         ? default
                         : new ExpressionDateTimeInfo
                         {
-                            Constant = Expression.Constant(toDateExpressionInfo.DateTime,
+                            Constant = Expression.Constant(toDateExpressionInfo?.DateTime,
                                 typeof(DateTime?)),
                             ExpressionType = toDateExpressionInfo.ExpressionType
                         },
