@@ -116,10 +116,10 @@ namespace AutoBuildPredicate.PredicateSearchProvider
             var equalsMethodInfo =
                 typeof(string).GetMethod(StringSearchOption.Equals.ToString(),
                     new[] {typeof(string)});
-            var valueToEquals = Expression.Constant(FilterPropertyValue);
+            var valueToEquals = Expression.Constant(FilterPropertyValue.ToString().ToLower());
 
-
-            var methodCallExpression = Expression.Call(PropertyOrField, equalsMethodInfo, valueToEquals);
+            var call = Expression.Call(PropertyOrField, "ToLower", null);
+            var methodCallExpression = Expression.Call(call, equalsMethodInfo, valueToEquals);
             var lambda = methodCallExpression.LambdaExpressionBuilder<TEntity>(Item);
 
             return lambda;
@@ -174,29 +174,39 @@ namespace AutoBuildPredicate.PredicateSearchProvider
 
         private Expression<Func<TEntity, bool>> StringFilterContainsExpr(StringFilter stringFilter)
         {
+//            var equalsMethodInfo =
+//                typeof(string).GetMethod(StringSearchOption.Equals.ToString(),
+//                    new[] { typeof(string) });
+//            var valueToEquals = Expression.Constant(FilterPropertyValue);
+//
+//            var call = Expression.Call(PropertyOrField, "ToLower", null);
+//            var methodCallExpression = Expression.Call(call, equalsMethodInfo, valueToEquals);
+//            var lambda = methodCallExpression.LambdaExpressionBuilder<TEntity>(Item);
+//
+//            return lambda;
+
             var methodName =
                 stringFilter.StringSearchOption.ToString();
-            MethodCallExpression methodCallExpression;
-            var valueToEquals = Expression.Constant(stringFilter.Str);
+            var valueToEquals = Expression.Constant(stringFilter.Str.ToLower());
 
-            MethodInfo methodInfo;
-            if (stringFilter.StringComparison != null)
-            {
-                methodInfo =
-                    typeof(string).GetMethod(methodName, new[] {typeof(string), typeof(StringComparison)});
+            //            if (stringFilter.StringComparison != null)
+//            {
+//                methodInfo =
+//                    typeof(string).GetMethod(methodName, new[] {typeof(string), typeof(StringComparison)});
+//
+//
+//                var comparisonType = Expression.Constant(stringFilter.StringComparison);
+//
+//                methodCallExpression = Expression.Call(PropertyOrField, methodInfo, valueToEquals,
+//                    comparisonType);
+//            }
+//            else
+//            {
 
-
-                var comparisonType = Expression.Constant(stringFilter.StringComparison);
-
-                methodCallExpression = Expression.Call(PropertyOrField, methodInfo, valueToEquals,
-                    comparisonType);
-            }
-            else
-            {
-                methodInfo = typeof(string).GetMethod(methodName, new[] {typeof(string)});
-
-                methodCallExpression = Expression.Call(PropertyOrField, methodInfo, valueToEquals);
-            }
+                var methodInfo = typeof(string).GetMethod(methodName, new[] {typeof(string)});
+                var call = Expression.Call(PropertyOrField, "ToLower", null);
+                var methodCallExpression = Expression.Call(call, methodInfo, valueToEquals);
+//            }
 
             var lambda = methodCallExpression.LambdaExpressionBuilder<TEntity>(Item);
             return lambda;
