@@ -11,7 +11,7 @@ namespace AutoBuildPredicate.PredicateSearchProvider.Helpers
 {
    internal static class Utilities
     {
-        internal static (ExpressionDateTimeInfo dateFromExprInfo, ExpressionDateTimeInfo dateToExprInfo) BuildExpressionDateTimeInfo(DateTimeFromToFilter dateTimeFromToFilter, bool nullable)
+        internal static (ExpressionDateTimeInfo dateFromExprInfo, ExpressionDateTimeInfo dateToExprInfo) BuildExpressionDateTimeInfo(DateTimeFromToFilterComplex dateTimeFromToFilter, bool nullable)
         {
             var dateTimeValueDateFrom = dateTimeFromToFilter.DateFrom;
             var dateTimeValueDateTo = dateTimeFromToFilter.DateTo;
@@ -70,6 +70,66 @@ namespace AutoBuildPredicate.PredicateSearchProvider.Helpers
 
             return (dateFromExprInfo, dateToExprInfo);
         }
+    
+        internal static (ExpressionDateTimeInfo dateFromExprInfo, ExpressionDateTimeInfo dateToExprInfo) BuildExpressionDateTimeInfo(DateTimeFromToFilter dateTimeFromToFilter, bool nullable)
+        {
+            // var dateTimeValueDateFrom = dateTimeFromToFilter.DateFrom;
+            // var dateTimeValueDateTo = dateTimeFromToFilter.DateTo;
+            var fromDate = dateTimeFromToFilter.DateFrom;
+            var toDate = dateTimeFromToFilter.DateTo;
+            const CompareExpressionType fromDateExprType = CompareExpressionType.GreaterThanOrEqual;
+            CompareExpressionType toDateExprType = default;
+
+
+            if (toDate != null)
+            {
+                toDateExprType = CompareExpressionType.LessThanOrEqual;
+                toDate = dateTimeFromToFilter.DateTo;
+            }
+
+
+            ExpressionDateTimeInfo dateToExprInfo = default;
+            ConstantExpression fromDateExpressionConstant;
+            if (dateTimeFromToFilter.TruncateTime)
+            {
+                fromDateExpressionConstant = Expression.Constant(fromDate.Value.Date, typeof(DateTime));
+            }
+            else
+            {
+                fromDateExpressionConstant = nullable
+                    ? Expression.Constant(fromDate, typeof(DateTime?))
+                    : Expression.Constant((DateTime)fromDate, typeof(DateTime));
+            }
+
+            if (toDate.HasValue)
+            {
+                ConstantExpression toDateExpressionConstant;
+                if (dateTimeFromToFilter.TruncateTime)
+                {
+                    toDateExpressionConstant = Expression.Constant(toDate.Value.Date, typeof(DateTime));
+                }
+                else
+                {
+                    toDateExpressionConstant = nullable
+                        ? Expression.Constant(toDate, typeof(DateTime?))
+                        : Expression.Constant((DateTime)toDate, typeof(DateTime));
+                }
+
+                dateToExprInfo = new ExpressionDateTimeInfo { Constant = toDateExpressionConstant, ExpressionType = toDateExprType, DateTime = toDate };
+
+                //                        (rightToDate, dateToExprType);
+            }
+
+            else
+            {
+                dateToExprInfo = new ExpressionDateTimeInfo();
+            }
+
+            var dateFromExprInfo = new ExpressionDateTimeInfo { Constant = fromDateExpressionConstant, ExpressionType = fromDateExprType, DateTime = fromDate };
+
+            return (dateFromExprInfo, dateToExprInfo);
+        }
+
         internal static string TryAddPath(string entityName, string path)
         {
             var name = entityName;

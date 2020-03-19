@@ -42,6 +42,12 @@ namespace AutoBuildPredicate.PredicateSearchProvider
 
                     AutoPredicate.PredicateByOperationType(predicateBitwiseOperation, expression);
                 }
+                else if (FilterPropertyValue is DateTimeFromToFilterComplex dateTimeFromToFilterComplex)
+                {
+                    var expression = DateTimeExpr(dateTimeFromToFilterComplex, Item);
+
+                    AutoPredicate.PredicateByOperationType(predicateBitwiseOperation, expression);
+                }
                 else if (FilterPropertyValue is DateTimeFromToFilter dateTimeFromToFilter)
                 {
                     var expression = DateTimeExpr(dateTimeFromToFilter, Item);
@@ -212,8 +218,70 @@ namespace AutoBuildPredicate.PredicateSearchProvider
             return lambda;
         }
 
-        private Expression<Func<TEntity, bool>> DateTimeExpr(DateTimeFromToFilter dateTimeFromToFilter,
+        private Expression<Func<TEntity, bool>> DateTimeExpr(DateTimeFromToFilterComplex dateTimeFromToFilter,
             ParameterExpression item)
+        {
+            Expression<Func<TEntity, bool>> lambdaExpr;
+
+
+            if (EntityPropertyType.IsNullable())
+            {
+                var (fromDateExpressionInfo, toDateExpressionInfo) =
+                    BuildExpressionDateTimeInfo(dateTimeFromToFilter, true);
+
+
+                MemberExpression memberExpression = dateTimeFromToFilter.TruncateTime
+                    ? Expression.Property(Expression.Property(PropertyOrField, "Value"), "Date")
+                    : PropertyOrField;
+
+                var ifTrue = memberExpression
+                    .GreaterLessThanBuilderExpressions(fromDateExpressionInfo, toDateExpressionInfo,
+                        BitwiseOperationExpressions.AndAlso);
+
+                // var ifFalse = PropertyOrField.GreaterLessThanBuilderExpressions(new ExpressionDateTimeInfo
+                //     {
+                //         Constant = Expression.Constant(default(DateTime?),
+                //             typeof(DateTime?)),
+                //         ExpressionType = fromDateExpressionInfo.ExpressionType
+                //     },
+                //     toDateExpressionInfo?.DateTime == null
+                //         ? default
+                //         : new ExpressionDateTimeInfo
+                //         {
+                //             Constant = Expression.Constant(default(DateTime?),
+                //                 typeof(DateTime?)),
+                //             ExpressionType = toDateExpressionInfo.ExpressionType
+                //         },
+                //     BitwiseOperationExpressions.AndAlso);
+
+                var nullOrGreater = Expression.AndAlso(
+                    Expression.Property(PropertyOrField, "HasValue"),
+                    ifTrue);
+
+                // var conditionalExpression =
+                //     Expression.Condition(Expression.Property(PropertyOrField, "HasValue"), ifTrue, ifFalse);
+
+                lambdaExpr = nullOrGreater.LambdaExpressionBuilder<TEntity>(item);
+            }
+            else
+            {
+                var (dateFromExprInfo, dateToExprInfo) = BuildExpressionDateTimeInfo(dateTimeFromToFilter, false);
+
+                var entityPropTruncated = dateTimeFromToFilter.TruncateTime
+                    ? Expression.Property(PropertyOrField, "Date")
+                    : PropertyOrField;
+
+                var dateTimeExpr =
+                    entityPropTruncated.GreaterLessThanBuilderExpressions(dateFromExprInfo, dateToExprInfo,
+                        BitwiseOperationExpressions.AndAlso);
+
+                lambdaExpr = dateTimeExpr.LambdaExpressionBuilder<TEntity>(item);
+            }
+
+            return lambdaExpr;
+        }
+        private Expression<Func<TEntity, bool>> DateTimeExpr(DateTimeFromToFilter dateTimeFromToFilter,
+          ParameterExpression item)
         {
             Expression<Func<TEntity, bool>> lambdaExpr;
 

@@ -8,7 +8,7 @@
     <Company>krzysztof.jankowski</Company>
     <Product>Extension for EFCoreLinqKit</Product>
     <PackageId>LinqKitEFCore.Extension.AutoBuildPredicate</PackageId>
-    <Version>0.2.4</Version>
+    <Version>0.2.6</Version>
     <NeutralLanguage>en</NeutralLanguage>
     <RepositoryUrl>https://github.com/janek9971/LinqKitEFCore.Extension.AutoBuildPredicate</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
