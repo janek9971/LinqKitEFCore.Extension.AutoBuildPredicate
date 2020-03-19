@@ -238,30 +238,13 @@ namespace AutoBuildPredicate.PredicateSearchProvider
                     .GreaterLessThanBuilderExpressions(fromDateExpressionInfo, toDateExpressionInfo,
                         BitwiseOperationExpressions.AndAlso);
 
-                // var ifFalse = PropertyOrField.GreaterLessThanBuilderExpressions(new ExpressionDateTimeInfo
-                //     {
-                //         Constant = Expression.Constant(default(DateTime?),
-                //             typeof(DateTime?)),
-                //         ExpressionType = fromDateExpressionInfo.ExpressionType
-                //     },
-                //     toDateExpressionInfo?.DateTime == null
-                //         ? default
-                //         : new ExpressionDateTimeInfo
-                //         {
-                //             Constant = Expression.Constant(default(DateTime?),
-                //                 typeof(DateTime?)),
-                //             ExpressionType = toDateExpressionInfo.ExpressionType
-                //         },
-                //     BitwiseOperationExpressions.AndAlso);
-
-                var nullOrGreater = Expression.AndAlso(
-                    Expression.Property(PropertyOrField, "HasValue"),
+              
+                var nullOrGreaterLess = Expression.OrElse(
+                Expression.Not(Expression.Property(PropertyOrField, "HasValue")),
                     ifTrue);
 
-                // var conditionalExpression =
-                //     Expression.Condition(Expression.Property(PropertyOrField, "HasValue"), ifTrue, ifFalse);
 
-                lambdaExpr = nullOrGreater.LambdaExpressionBuilder<TEntity>(item);
+                lambdaExpr = nullOrGreaterLess.LambdaExpressionBuilder<TEntity>(item);
             }
             else
             {
@@ -299,31 +282,12 @@ namespace AutoBuildPredicate.PredicateSearchProvider
                 var ifTrue = memberExpression
                     .GreaterLessThanBuilderExpressions(fromDateExpressionInfo, toDateExpressionInfo,
                         BitwiseOperationExpressions.AndAlso);
-
-                // var ifFalse = PropertyOrField.GreaterLessThanBuilderExpressions(new ExpressionDateTimeInfo
-                //     {
-                //         Constant = Expression.Constant(default(DateTime?),
-                //             typeof(DateTime?)),
-                //         ExpressionType = fromDateExpressionInfo.ExpressionType
-                //     },
-                //     toDateExpressionInfo?.DateTime == null
-                //         ? default
-                //         : new ExpressionDateTimeInfo
-                //         {
-                //             Constant = Expression.Constant(default(DateTime?),
-                //                 typeof(DateTime?)),
-                //             ExpressionType = toDateExpressionInfo.ExpressionType
-                //         },
-                //     BitwiseOperationExpressions.AndAlso);
-
-                var nullOrGreater = Expression.AndAlso(
+                var nullOrGreaterLess = Expression.OrElse(
                     Expression.Property(PropertyOrField, "HasValue"),
                     ifTrue);
 
-                // var conditionalExpression =
-                //     Expression.Condition(Expression.Property(PropertyOrField, "HasValue"), ifTrue, ifFalse);
 
-                lambdaExpr = nullOrGreater.LambdaExpressionBuilder<TEntity>(item);
+                lambdaExpr = nullOrGreaterLess.LambdaExpressionBuilder<TEntity>(item);
             }
             else
             {

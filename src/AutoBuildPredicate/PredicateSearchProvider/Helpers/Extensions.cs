@@ -200,7 +200,7 @@ namespace AutoBuildPredicate.PredicateSearchProvider.Helpers
 
             entityType = objType.Name;
 
-            if (propertyType == typeof(DateTimeFromToFilterComplex))
+            if (propertyType == typeof(DateTimeFromToFilterComplex) || propertyType == typeof(DateTimeFromToFilter))
             {
                 propertyType = typeof(DateTime);
             }
