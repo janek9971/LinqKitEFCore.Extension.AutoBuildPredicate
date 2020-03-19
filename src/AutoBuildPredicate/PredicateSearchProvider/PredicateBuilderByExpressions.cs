@@ -232,27 +232,30 @@ namespace AutoBuildPredicate.PredicateSearchProvider
                     .GreaterLessThanBuilderExpressions(fromDateExpressionInfo, toDateExpressionInfo,
                         BitwiseOperationExpressions.AndAlso);
 
-                var ifFalse = PropertyOrField.GreaterLessThanBuilderExpressions(new ExpressionDateTimeInfo
-                    {
-                        Constant = Expression.Constant(fromDateExpressionInfo.DateTime,
-                            typeof(DateTime?)),
-                        ExpressionType = fromDateExpressionInfo.ExpressionType
-                    },
-                    toDateExpressionInfo?.DateTime == null
-                        ? default
-                        : new ExpressionDateTimeInfo
-                        {
-                            Constant = Expression.Constant(toDateExpressionInfo?.DateTime,
-                                typeof(DateTime?)),
-                            ExpressionType = toDateExpressionInfo.ExpressionType
-                        },
-                    BitwiseOperationExpressions.AndAlso);
+                // var ifFalse = PropertyOrField.GreaterLessThanBuilderExpressions(new ExpressionDateTimeInfo
+                //     {
+                //         Constant = Expression.Constant(default(DateTime?),
+                //             typeof(DateTime?)),
+                //         ExpressionType = fromDateExpressionInfo.ExpressionType
+                //     },
+                //     toDateExpressionInfo?.DateTime == null
+                //         ? default
+                //         : new ExpressionDateTimeInfo
+                //         {
+                //             Constant = Expression.Constant(default(DateTime?),
+                //                 typeof(DateTime?)),
+                //             ExpressionType = toDateExpressionInfo.ExpressionType
+                //         },
+                //     BitwiseOperationExpressions.AndAlso);
 
+                var nullOrGreater = Expression.AndAlso(
+                    Expression.Property(PropertyOrField, "HasValue"),
+                    ifTrue);
 
-                var conditionalExpression =
-                    Expression.Condition(Expression.Property(PropertyOrField, "HasValue"), ifTrue, ifFalse);
+                // var conditionalExpression =
+                //     Expression.Condition(Expression.Property(PropertyOrField, "HasValue"), ifTrue, ifFalse);
 
-                lambdaExpr = conditionalExpression.LambdaExpressionBuilder<TEntity>(item);
+                lambdaExpr = nullOrGreater.LambdaExpressionBuilder<TEntity>(item);
             }
             else
             {

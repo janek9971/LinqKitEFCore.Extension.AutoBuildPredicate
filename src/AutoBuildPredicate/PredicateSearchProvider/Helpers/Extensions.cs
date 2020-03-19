@@ -104,6 +104,7 @@ namespace AutoBuildPredicate.PredicateSearchProvider.Helpers
             ExpressionDateTimeInfo rightExpr,
             BitwiseOperationExpressions bitwiseOperationExpressions)
         {
+
             var greaterThanOrEqualBody = Expression.MakeBinary(leftExpr.ExpressionType.ConvertByName<ExpressionType>(),
                 leftExpression,
                 leftExpr.Constant);
