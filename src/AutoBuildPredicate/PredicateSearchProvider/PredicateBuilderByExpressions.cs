@@ -44,12 +44,18 @@ namespace AutoBuildPredicate.PredicateSearchProvider
                 }
                 else if (FilterPropertyValue is DateTimeFromToFilterComplex dateTimeFromToFilterComplex)
                 {
+                    if (dateTimeFromToFilterComplex.DateFrom != null && !dateTimeFromToFilterComplex.DateFrom.DateTime.HasValue)
+                        throw new ArgumentNullException(nameof(dateTimeFromToFilterComplex.DateFrom));
+
                     var expression = DateTimeExpr(dateTimeFromToFilterComplex, Item);
 
                     AutoPredicate.PredicateByOperationType(predicateBitwiseOperation, expression);
                 }
                 else if (FilterPropertyValue is DateTimeFromToFilter dateTimeFromToFilter)
                 {
+                    if (!dateTimeFromToFilter.DateFrom.HasValue)
+                        throw new ArgumentNullException(nameof(dateTimeFromToFilter.DateFrom));
+
                     var expression = DateTimeExpr(dateTimeFromToFilter, Item);
 
                     AutoPredicate.PredicateByOperationType(predicateBitwiseOperation, expression);
@@ -239,8 +245,8 @@ namespace AutoBuildPredicate.PredicateSearchProvider
                         BitwiseOperationExpressions.AndAlso);
 
               
-                var nullOrGreaterLess = Expression.OrElse(
-                Expression.Not(Expression.Property(PropertyOrField, "HasValue")),
+                var nullOrGreaterLess = Expression.AndAlso(
+             Expression.Property(PropertyOrField, "HasValue"),
                     ifTrue);
 
 
@@ -282,10 +288,9 @@ namespace AutoBuildPredicate.PredicateSearchProvider
                 var ifTrue = memberExpression
                     .GreaterLessThanBuilderExpressions(fromDateExpressionInfo, toDateExpressionInfo,
                         BitwiseOperationExpressions.AndAlso);
-                var nullOrGreaterLess = Expression.OrElse(
+                var nullOrGreaterLess = Expression.AndAlso(
                     Expression.Property(PropertyOrField, "HasValue"),
                     ifTrue);
-
 
                 lambdaExpr = nullOrGreaterLess.LambdaExpressionBuilder<TEntity>(item);
             }

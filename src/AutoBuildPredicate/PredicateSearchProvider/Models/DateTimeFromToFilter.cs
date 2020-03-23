@@ -7,7 +7,7 @@ namespace AutoBuildPredicate.PredicateSearchProvider.Models
 {
     public class DateTimeFromToFilter
     {
-        [Required] [NotNull] public DateTime? DateFrom { get; set; } 
+        public DateTime? DateFrom { get; set; } 
         public DateTime? DateTo { get; set; }
         public  bool TruncateTime { get; set; } = true;
     }
