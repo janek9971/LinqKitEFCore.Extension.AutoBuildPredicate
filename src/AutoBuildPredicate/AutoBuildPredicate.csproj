@@ -8,7 +8,7 @@
     <Company>krzysztof.jankowski</Company>
     <Product>Extension for EFCoreLinqKit</Product>
     <PackageId>LinqKitEFCore.Extension.AutoBuildPredicate</PackageId>
-    <Version>0.5.1</Version>
+    <Version>0.5.13</Version>
     <NuGetPublishType>remote</NuGetPublishType>
     <NuGetPublishLocation>https://interdevops.canalplus.pl/InterConnect/_packaging/MyFeed/nuget/v3/index.json</NuGetPublishLocation>
     <NeutralLanguage>en</NeutralLanguage>

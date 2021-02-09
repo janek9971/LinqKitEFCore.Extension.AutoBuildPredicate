@@ -76,18 +76,18 @@ namespace AutoBuildPredicate.PredicateSearchProvider
                         if (!string.IsNullOrEmpty(fieldPathSearchAttribute.AssemblyName) &&
                             !string.IsNullOrEmpty(fieldPathSearchAttribute.TypeName))
                         {
-                            inst = GetInstanceOfNestedEntity(path, fieldPathSearchAttribute.AssemblyName, fieldPathSearchAttribute.TypeName);
+                            inst = GetInstanceOfNestedEntity(path, fieldPathSearchAttribute.AssemblyName);
                         }
-                        else if (!string.IsNullOrEmpty(AssemblyName) && !string.IsNullOrEmpty(TypeName))
+                        else if (!string.IsNullOrEmpty(AssemblyName))
                         {
-                            inst = GetInstanceOfNestedEntity(path, AssemblyName, TypeName);
+                            inst = GetInstanceOfNestedEntity(path, AssemblyName);
                         }
                         else
                         {
                             throw new ArgumentException(
                                 FormattableString.Invariant(
                                     $"Params must be passed via constructor or directly to property by an attribute"),
-                                FormattableString.Invariant($"{nameof(AssemblyName)} or {nameof(TypeName)}"));
+                                FormattableString.Invariant($"{nameof(AssemblyName)}"));
                         }
                     }
                 }

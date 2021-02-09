@@ -141,7 +141,7 @@ namespace AutoBuildPredicate.PredicateSearchProvider.Helpers
             return name;
         }
 
-        internal static object GetInstanceOfNestedEntity(string path, string assemblyName, string typeName)
+        internal static object GetInstanceOfNestedEntity(string path, string assemblyName)
         {
             var entityModelName = assemblyName;
 
@@ -149,8 +149,8 @@ namespace AutoBuildPredicate.PredicateSearchProvider.Helpers
 
             var qualifiedName =
                 Assembly.CreateQualifiedName(entityModelName,
-                    $"{entityModelName}.{typeName}.{lastInPath.Trim('@')}") ?? throw new InvalidOperationException(
-                    $"QualifiedName does not find for given parameters: {nameof(entityModelName)} and {nameof(typeName)}");
+                    $"{entityModelName}.{lastInPath.Trim('@')}") ?? throw new InvalidOperationException(
+                    $"QualifiedName does not find for given parameters: {nameof(entityModelName)}");
 
 
             var type = Type.GetType(qualifiedName);
