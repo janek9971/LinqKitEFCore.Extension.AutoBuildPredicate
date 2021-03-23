@@ -17,17 +17,7 @@ namespace AutoBuildPredicate.PredicateSearchProvider.CustomUtilities.Attributes
 //            AssemblyName = assemblyName;
 //            TypeName = typeName;
         }
-        public CustomSearchPath(string[] searchPath,string assemblyName, string typeName)
-        {
-            SearchPath = string.Join("@", searchPath);
-            AssemblyName = assemblyName;
-            TypeName = typeName;
-        }
-
         public string SearchPath { get; }
-
-        public string AssemblyName { get;  }
-        public string TypeName { get;  }
 
     }
 }

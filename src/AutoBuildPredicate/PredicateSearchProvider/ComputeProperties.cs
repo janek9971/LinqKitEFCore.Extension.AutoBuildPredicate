@@ -69,16 +69,12 @@ namespace AutoBuildPredicate.PredicateSearchProvider
                 if (isCustomSearchPath)
                 {
                     var fieldPathSearchAttribute = property.GetCustomAttribute<CustomSearchPath>();
-                    path = fieldPathSearchAttribute.SearchPath;
+                    path = fieldPathSearchAttribute?.SearchPath;
 
                     if (!string.IsNullOrEmpty(path))
                     {
-                        if (!string.IsNullOrEmpty(fieldPathSearchAttribute.AssemblyName) &&
-                            !string.IsNullOrEmpty(fieldPathSearchAttribute.TypeName))
-                        {
-                            inst = GetInstanceOfNestedEntity(path, fieldPathSearchAttribute.AssemblyName);
-                        }
-                        else if (!string.IsNullOrEmpty(AssemblyName))
+                        
+                        if (!string.IsNullOrEmpty(AssemblyName))
                         {
                             inst = GetInstanceOfNestedEntity(path, AssemblyName);
                         }
