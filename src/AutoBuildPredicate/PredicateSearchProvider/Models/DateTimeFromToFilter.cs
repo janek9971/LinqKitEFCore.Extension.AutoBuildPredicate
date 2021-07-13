@@ -10,11 +10,4 @@ namespace AutoBuildPredicate.PredicateSearchProvider.Models
         public DateTime? DateFrom { get; set; } 
         public DateTime? DateTo { get; set; }
     }
-
-    public class DateTimeFromToTruncTimeFilter : DateTimeFromToFilter
-    {
-
-    }
-
-
 }
