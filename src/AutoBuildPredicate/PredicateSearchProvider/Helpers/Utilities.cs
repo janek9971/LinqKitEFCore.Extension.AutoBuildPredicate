@@ -15,10 +15,10 @@ namespace AutoBuildPredicate.PredicateSearchProvider.Helpers
         {
             var dateTimeValueDateFrom = dateTimeFromToFilter.DateFrom;
             var dateTimeValueDateTo = dateTimeFromToFilter.DateTo;
-            var fromDate = dateTimeValueDateFrom.DateTime;
+            var fromDate = dateTimeValueDateFrom?.DateTime;
             DateTime? toDate = default;
             var fromDateExprType =
-                dateTimeValueDateFrom.ExpressionType ?? CompareExpressionType.GreaterThanOrEqual;
+                dateTimeValueDateFrom?.ExpressionType ?? CompareExpressionType.GreaterThanOrEqual;
             CompareExpressionType toDateExprType = default;
 
 
@@ -88,36 +88,22 @@ namespace AutoBuildPredicate.PredicateSearchProvider.Helpers
             }
 
 
-            ExpressionDateTimeInfo dateToExprInfo = default;
-            ConstantExpression fromDateExpressionConstant;
-            if (dateTimeFromToFilter.TruncateTime)
-            {
-                fromDateExpressionConstant = Expression.Constant(fromDate.Value.Date, typeof(DateTime));
-            }
-            else
-            {
-                fromDateExpressionConstant = nullable
-                    ? Expression.Constant(fromDate, typeof(DateTime?))
-                    : Expression.Constant((DateTime)fromDate, typeof(DateTime));
-            }
+            ExpressionDateTimeInfo dateToExprInfo;
+
+
+            var fromDateExpressionConstant = nullable
+                ? Expression.Constant(fromDate, typeof(DateTime?))
+                : Expression.Constant((DateTime)fromDate, typeof(DateTime));
+            
 
             if (toDate.HasValue)
             {
-                ConstantExpression toDateExpressionConstant;
-                if (dateTimeFromToFilter.TruncateTime)
-                {
-                    toDateExpressionConstant = Expression.Constant(toDate.Value.Date, typeof(DateTime));
-                }
-                else
-                {
-                    toDateExpressionConstant = nullable
-                        ? Expression.Constant(toDate, typeof(DateTime?))
-                        : Expression.Constant((DateTime)toDate, typeof(DateTime));
-                }
+                var toDateExpressionConstant = nullable
+                    ? Expression.Constant(toDate, typeof(DateTime?))
+                    : Expression.Constant((DateTime)toDate, typeof(DateTime));
+
 
                 dateToExprInfo = new ExpressionDateTimeInfo { Constant = toDateExpressionConstant, ExpressionType = toDateExprType, DateTime = toDate };
-
-                //                        (rightToDate, dateToExprType);
             }
 
             else

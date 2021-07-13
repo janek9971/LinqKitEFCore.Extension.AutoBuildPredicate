@@ -9,7 +9,7 @@ namespace AutoBuildPredicate.PredicateSearchProvider.Models
 {
     public class NumericFilter<T> : IEquatable<NumericFilter<T>>
     {
-        [Required] public NumericValue<T> Value1 { get; set; }
+        [CanBeNull] public NumericValue<T> Value1 { get; set; }
         [CanBeNull] public NumericValue<T> Value2 { get; set; }
 
         public bool Equals(NumericFilter<T> other)

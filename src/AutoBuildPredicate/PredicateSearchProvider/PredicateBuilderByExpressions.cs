@@ -60,11 +60,22 @@ namespace AutoBuildPredicate.PredicateSearchProvider
 
                     AutoPredicate.PredicateByOperationType(predicateBitwiseOperation, expression);
                 }
+                else if (FilterPropertyValue is DateTimeFromToTruncTimeFilter dateTimeFromToTruncTimeFilter)
+                {
+                    if (!dateTimeFromToTruncTimeFilter.DateFrom.HasValue)
+                        throw new ArgumentNullException(nameof(dateTimeFromToFilter.DateFrom));
+
+                    var expression = DateTimeExpr(dateTimeFromToTruncTimeFilter, Item);
+
+                    AutoPredicate.PredicateByOperationType(predicateBitwiseOperation, expression);
+                }
                 else if (FilterPropertyValue.GetType().IsGenericType &&
                          FilterPropertyValue.GetType().GetGenericTypeDefinition() == typeof(NumericFilter<>))
                 {
                     var expression = NumericFilterExpr();
-      
+
+                    if(expression==null) continue;
+
                     AutoPredicate.PredicateByOperationType(predicateBitwiseOperation, expression);
                 }
                 else if (!searchPredicatePropertyInfo.IsEntityTypeProperty)
@@ -142,25 +153,28 @@ namespace AutoBuildPredicate.PredicateSearchProvider
             #region NumericFilter
 
             var numericFilter = FilterPropertyValue.GetType().GetProperties();
-            var value1 = numericFilter.First().GetValue(FilterPropertyValue);
-            var value2 = numericFilter.Last().GetValue(FilterPropertyValue);
+            var value1 = numericFilter.FirstOrDefault()?.GetValue(FilterPropertyValue);
+            var value2 = numericFilter.LastOrDefault()?.GetValue(FilterPropertyValue);
 
             #endregion
 
+            BinaryExpression expr1 = null;
 
-            #region NumericValue
+            if (value1 != null)
+            {
+                #region NumericValue
 
-            var numericValues1 = value1.GetType().GetProperties();
-            var numericValue1 = numericValues1.First().GetValue(value1);
-            var exprTypeValue1 = (CompareExpressionType)numericValues1.Last().GetValue(value1);
+                var numericValues1 = value1.GetType().GetProperties();
+                var numericValue1 = numericValues1.First().GetValue(value1);
+                var exprTypeValue1 = (CompareExpressionType)numericValues1.Last().GetValue(value1);
 
-            #endregion
+                #endregion
 
-            var value1ExprConst = Expression.Constant(numericValue1);
-
-            var expr1 = Expression.MakeBinary(exprTypeValue1.ConvertByName<ExpressionType>(),
-                PropertyOrField,
-                value1ExprConst);
+                var value1ExprConst = Expression.Constant(numericValue1);
+                expr1 = Expression.MakeBinary(exprTypeValue1.ConvertByName<ExpressionType>(),
+                    PropertyOrField,
+                    value1ExprConst);
+            }
 
             BinaryExpression expr2 = null;
             if (value2 != null)
@@ -179,46 +193,34 @@ namespace AutoBuildPredicate.PredicateSearchProvider
                     PropertyOrField,
                     value2ExprConst);
             }
+            Expression<Func<TEntity, bool>> lambda;
 
-            var lambda = expr1.LambdaExpressionBuilder<TEntity>(Item, expr2, BitwiseOperationExpressions.Or);
+            switch (expr1)
+            {
+                case null when expr2 is null:
+                    return null;
+                case null:
+                    lambda = expr2.LambdaExpressionBuilder<TEntity>(Item);
+                    break;
+                default:
+                    lambda = expr1.LambdaExpressionBuilder<TEntity>(Item, expr2);
+                    break;
+            }
+
             return lambda;
         }
 
         private Expression<Func<TEntity, bool>> StringFilterContainsExpr(StringFilter stringFilter)
         {
-//            var equalsMethodInfo =
-//                typeof(string).GetMethod(StringSearchOption.Equals.ToString(),
-//                    new[] { typeof(string) });
-//            var valueToEquals = Expression.Constant(FilterPropertyValue);
-//
-//            var call = Expression.Call(PropertyOrField, "ToLower", null);
-//            var methodCallExpression = Expression.Call(call, equalsMethodInfo, valueToEquals);
-//            var lambda = methodCallExpression.LambdaExpressionBuilder<TEntity>(Item);
-//
-//            return lambda;
 
             var methodName =
                 stringFilter.StringSearchOption.ToString();
             var valueToEquals = Expression.Constant(stringFilter.Str.ToLower());
 
-            //            if (stringFilter.StringComparison != null)
-//            {
-//                methodInfo =
-//                    typeof(string).GetMethod(methodName, new[] {typeof(string), typeof(StringComparison)});
-//
-//
-//                var comparisonType = Expression.Constant(stringFilter.StringComparison);
-//
-//                methodCallExpression = Expression.Call(PropertyOrField, methodInfo, valueToEquals,
-//                    comparisonType);
-//            }
-//            else
-//            {
 
                 var methodInfo = typeof(string).GetMethod(methodName, new[] {typeof(string)});
                 var call = Expression.Call(PropertyOrField, "ToLower", null);
                 var methodCallExpression = Expression.Call(call, methodInfo, valueToEquals);
-//            }
 
             var lambda = methodCallExpression.LambdaExpressionBuilder<TEntity>(Item);
             return lambda;
@@ -269,8 +271,11 @@ namespace AutoBuildPredicate.PredicateSearchProvider
 
             return lambdaExpr;
         }
-        private Expression<Func<TEntity, bool>> DateTimeExpr(DateTimeFromToFilter dateTimeFromToFilter,
-          ParameterExpression item)
+
+
+
+        private Expression<Func<TEntity, bool>> DateTimeExpr(DateTimeFromToTruncTimeFilter dateTimeFromToTruncTimeFilter,
+            ParameterExpression item)
         {
             Expression<Func<TEntity, bool>> lambdaExpr;
 
@@ -278,12 +283,12 @@ namespace AutoBuildPredicate.PredicateSearchProvider
             if (EntityPropertyType.IsNullable())
             {
                 var (fromDateExpressionInfo, toDateExpressionInfo) =
-                    BuildExpressionDateTimeInfo(dateTimeFromToFilter, true);
+                    BuildExpressionDateTimeInfo(dateTimeFromToTruncTimeFilter, true);
 
 
-                MemberExpression memberExpression = dateTimeFromToFilter.TruncateTime
-                    ? Expression.Property(Expression.Property(PropertyOrField, "Value"), "Date")
-                    : PropertyOrField;
+                MemberExpression memberExpression =
+                    Expression.Property(Expression.Property(PropertyOrField, "Value"), "Date");
+              
 
                 var ifTrue = memberExpression
                     .GreaterLessThanBuilderExpressions(fromDateExpressionInfo, toDateExpressionInfo,
@@ -296,14 +301,47 @@ namespace AutoBuildPredicate.PredicateSearchProvider
             }
             else
             {
-                var (dateFromExprInfo, dateToExprInfo) = BuildExpressionDateTimeInfo(dateTimeFromToFilter, false);
+                var (dateFromExprInfo, dateToExprInfo) = BuildExpressionDateTimeInfo(dateTimeFromToTruncTimeFilter, false);
 
-                var entityPropTruncated = dateTimeFromToFilter.TruncateTime
-                    ? Expression.Property(PropertyOrField, "Date")
-                    : PropertyOrField;
+                var entityPropTruncated = Expression.Property(PropertyOrField, "Date");
 
                 var dateTimeExpr =
                     entityPropTruncated.GreaterLessThanBuilderExpressions(dateFromExprInfo, dateToExprInfo,
+                        BitwiseOperationExpressions.AndAlso);
+
+                lambdaExpr = dateTimeExpr.LambdaExpressionBuilder<TEntity>(item);
+            }
+
+            return lambdaExpr;
+        }
+
+        private Expression<Func<TEntity, bool>> DateTimeExpr(DateTimeFromToFilter dateTimeFromToFilter,
+          ParameterExpression item)
+        {
+            Expression<Func<TEntity, bool>> lambdaExpr;
+
+
+            if (EntityPropertyType.IsNullable())
+            {
+                var (fromDateExpressionInfo, toDateExpressionInfo) =
+                    BuildExpressionDateTimeInfo(dateTimeFromToFilter, true);
+
+                var ifTrue = PropertyOrField
+                    .GreaterLessThanBuilderExpressions(fromDateExpressionInfo, toDateExpressionInfo,
+                        BitwiseOperationExpressions.AndAlso);
+                var nullOrGreaterLess = Expression.AndAlso(
+                    Expression.Property(PropertyOrField, "HasValue"),
+                    ifTrue);
+
+                lambdaExpr = nullOrGreaterLess.LambdaExpressionBuilder<TEntity>(item);
+            }
+            else
+            {
+                var (dateFromExprInfo, dateToExprInfo) = BuildExpressionDateTimeInfo(dateTimeFromToFilter, false);
+
+
+                var dateTimeExpr =
+                    PropertyOrField.GreaterLessThanBuilderExpressions(dateFromExprInfo, dateToExprInfo,
                         BitwiseOperationExpressions.AndAlso);
 
                 lambdaExpr = dateTimeExpr.LambdaExpressionBuilder<TEntity>(item);

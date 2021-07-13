@@ -112,7 +112,7 @@ namespace AutoBuildPredicate.PredicateSearchProvider
                 switch (value)
                 {
                     case DateTime _ :
-                        throw new ArgumentException($"Pass date property by type: {nameof(DateTimeFromToFilter)} or {nameof(DateTimeFromToFilterComplex)}", entityName);
+                        throw new ArgumentException($"Pass date property by type: {nameof(DateTimeFromToFilter)} or {nameof(DateTimeFromToTruncTimeFilter)} or {nameof(DateTimeFromToFilterComplex)}", entityName);
             
                     default:
                         propertyInfoForPredicate.PropertyValue = value;
